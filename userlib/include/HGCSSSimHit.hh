@@ -25,11 +25,11 @@ public:
 	HGCSSSimHit() :
 			energy_(0), time_(0), zpos_(0), layer_(0), cellid_(0), nGammas_(0), nElectrons_(
 					0), nMuons_(0), nNeutrons_(0), nProtons_(0), nHadrons_(0), trackIDMainParent_(
-					0), eDepMainParent_(0), pdgIDMainParent_(0), parentEng_(0) {
+					0), energyMainParent_(0), trackID_(0), parentEng_(0) {
 
 	}
 	;
-	HGCSSSimHit(const G4SiHit & aSiHit,  TH2Poly* map,
+	HGCSSSimHit(const G4SiHit & aSiHit, const unsigned & asilayer, TH2Poly* map,
 			const float cellSize = CELL_SIZE_X);
 
 	~HGCSSSimHit() {
@@ -64,7 +64,7 @@ public:
 
 	//re-encode local layer into det layer + si layer if several sensitive layers (up to 3...)
 	inline void setLayer(const unsigned & layer, const unsigned & silayer) {
-		if (silayer > 4) {
+		if (silayer > 2) {
 			std::cerr << " ERROR! Trying to add silayer " << silayer
 					<< ", should be less than 3..." << std::endl;
 			exit(1);
@@ -174,30 +174,29 @@ public:
 	;
 
 	inline double mainParentEfrac() const {
-		return eDepMainParent_ / energy_;
+		return energyMainParent_ / energy_;
 	}
 	;
 
 	void Print(std::ostream & aOs) const;
 
-public:
+private:
 
 	double energy_;
-	double parentEng_;
-	double time_;
+    double time_;
 	double zpos_;
-	double pdgIDMainParent_;
-	unsigned layer_;
-	unsigned cellid_;
+    unsigned layer_;
+    unsigned cellid_;
 	unsigned nGammas_;
 	unsigned nElectrons_;
-	unsigned nMuons_;
+    unsigned nMuons_;
 	unsigned nNeutrons_;
 	unsigned nProtons_;
-	unsigned nHadrons_;
+    unsigned nHadrons_;
 	int trackIDMainParent_;
-	double eDepMainParent_;
-	double KEMainParent_;
+    double energyMainParent_;
+	double trackID_;
+    double parentEng_;
 
 ClassDef(HGCSSSimHit,1)
 	;

@@ -28,10 +28,10 @@ public:
 		return mass_;
 	}
 	;
-	inline double time() const {
-		return time_;
-	}
-	;
+        inline double time() const {
+                return time_;
+        }
+        ;
 	inline double x() const {
 		return xpos_;
 	}
@@ -144,10 +144,10 @@ public:
 		mass_ = val;
 	}
 	;
-	inline void time(const double & val) {
-		time_ = val;
-	}
-	;
+        inline void time(const double & val) {
+                time_ = val;
+        }
+        ;
 	inline void pdgid(const int & val) {
 		pdgid_ = val;
 	}
@@ -158,10 +158,6 @@ public:
 	;
 	inline void vertexKE(const double & val) {
 		vertexKE_ = val;
-	}
-	;
-	inline void finalKE(const double & val) {
-		finalKE_ = val;
 	}
 	;
 	inline void vertexPos(TVector3  & val) {
@@ -189,11 +185,8 @@ public:
 	}
 	;
 	inline double vertexKE() const {
+		//do not want back-scattered particles,
 		return vertexKE_;
-	}
-	;
-	inline double finalKE() const {
-		return finalKE_;
 	}
 	;
 	inline TVector3 vertexPos() {
@@ -215,7 +208,7 @@ public:
 
 private:
 
-	double time_;
+        double time_;
 	double xpos_;
 	double ypos_;
 	double zpos_;
@@ -230,7 +223,6 @@ private:
 	int trackID_;
 	double vertexKE_;
 	double parentKE_;
-	double finalKE_;
 	TVector3 vertexPos_;
 	TVector3 vertexMom_;
 ClassDef(HGCSSGenParticle,1)

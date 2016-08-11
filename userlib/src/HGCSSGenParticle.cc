@@ -6,7 +6,7 @@
 
 void HGCSSGenParticle::Print(std::ostream & aOs) const {
 	aOs << std::setprecision(6) << "===================================="
-			<< std::endl << " = time " << time_ << " ns" << std::endl
+			<< std::endl
 			<< " = position " << xpos_ << " " << ypos_ << " " << zpos_ << " mm"
 			<< std::endl << " = Mass " << mass_ << " MeV" << std::endl
 			<< " = momentum " << px_ << " " << py_ << " " << pz_ << " MeV"

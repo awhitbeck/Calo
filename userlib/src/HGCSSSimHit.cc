@@ -4,11 +4,18 @@
 #include <cmath>
 #include <stdlib.h>
 
-HGCSSSimHit::HGCSSSimHit(const G4SiHit & aSiHit,
+HGCSSSimHit::HGCSSSimHit(const G4SiHit & aSiHit, const unsigned & asilayer,
 		TH2Poly* map, const float) {
+	energy_ = aSiHit.energyDep;
+	zpos_ = aSiHit.hit_z;
+	setLayer(aSiHit.layer, asilayer);
+	//coordinates in mm
+	//double z = aSiHit.hit_x;
 	double x = aSiHit.hit_x;
 	double y = aSiHit.hit_y;
+
 	assert(map);
+	cellid_ = map->FindBin(x, y);
 
 	nGammas_ = 0;
 	nElectrons_ = 0;
@@ -16,7 +23,6 @@ HGCSSSimHit::HGCSSSimHit(const G4SiHit & aSiHit,
 	nNeutrons_ = 0;
 	nProtons_ = 0;
 	nHadrons_ = 0;
-
 	if (abs(aSiHit.pdgId) == 22)
 		nGammas_++;
 	else if (abs(aSiHit.pdgId) == 11)
@@ -30,15 +36,10 @@ HGCSSSimHit::HGCSSSimHit(const G4SiHit & aSiHit,
 	else
 		nHadrons_++;
 
-	cellid_ = map->FindBin(x, y);
-	if (cellid_ > 1e5)
-		std::cout << "The cell id = " << cellid_ << ", (x,y) = " << "(" << x << ", " << y << ")" << std::endl;
-	layer_ = aSiHit.layer;
-	energy_ = aSiHit.energyDep;
-	trackIDMainParent_ = aSiHit.trackId;
-	KEMainParent_ = aSiHit.parentKE;
-	pdgIDMainParent_ = aSiHit.pdgId;
-	eDepMainParent_ = aSiHit.energyDep ;
+	trackIDMainParent_ = aSiHit.parentId;
+	energyMainParent_ = aSiHit.energyDep;
+	trackID_ = aSiHit.trackId;
+	parentEng_ = aSiHit.parentKE;
 }
 
 void HGCSSSimHit::Add(const G4SiHit & aSiHit) {
@@ -57,24 +58,15 @@ void HGCSSSimHit::Add(const G4SiHit & aSiHit) {
 		nHadrons_++;
 
 	energy_ += aSiHit.energyDep;
-
-	if (aSiHit.energyDep > eDepMainParent_) {
+	if (aSiHit.energyDep > energyMainParent_) {
 		trackIDMainParent_ = aSiHit.parentId;
-		eDepMainParent_ = aSiHit.energyDep;
-		pdgIDMainParent_ = aSiHit.pdgId;
-		KEMainParent_ = aSiHit.parentKE;
-
+		energyMainParent_ = aSiHit.energyDep;
 	}
 
 }
 
-
-
 std::pair<double, double> HGCSSSimHit::get_xy(const bool isScintillator,
 		const HGCSSGeometryConversion & aGeom) const {
-	if (isScintillator)
-		return aGeom.squareGeom.find(cellid_)->second;
-	else
 		return aGeom.hexaGeom.find(cellid_)->second;
 
 }
@@ -103,7 +95,7 @@ double HGCSSSimHit::phi(const bool isScintillator,
 void HGCSSSimHit::Print(std::ostream & aOs) const {
 	aOs << "====================================" << std::endl << " = Layer "
 			<< layer() << " siLayer " << silayer() << " cellid " << cellid_
-			<< std::endl << " = Energy " << energy_ << " time " << time_
+			<< std::endl << " = Energy " << energy_ 
 			<< std::endl << " = g " << nGammas_ << " e " << nElectrons_
 			<< " mu " << nMuons_ << " neutron " << nNeutrons_ << " proton "
 			<< nProtons_ << " had " << nHadrons_ << std::endl

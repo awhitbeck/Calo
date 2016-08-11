@@ -16,9 +16,7 @@ public:
 	}
 	;
 
-	~HGCSSInfo() {
-	}
-	;
+	~HGCSSInfo() {};
 
 	inline void version(const int & aVal) {
 		version_ = aVal;
@@ -40,7 +38,7 @@ public:
 	}
 	;
 
-	inline void cellSize(const double & aVal) {
+	inline void cellSize(const double &aVal) {
 		cellsize_ = aVal;
 	}
 	;
@@ -50,7 +48,7 @@ public:
 	}
 	;
 
-	inline void calorSizeXY(const double & aVal) {
+	inline void calorSizeXY(const double &aVal) {
 		calorSizeXY_ = aVal;
 	}
 	;
@@ -67,8 +65,7 @@ private:
 	double cellsize_;
 	double calorSizeXY_;
 
-ClassDef(HGCSSInfo,1)
-	;
+ClassDef(HGCSSInfo,1);
 
 };
 
