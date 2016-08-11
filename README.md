@@ -41,3 +41,7 @@ for i in `seq 0 5`; do python submitProdLPC_v2.py  -r ${i} -o /afs/cern.ch/work/
 
 ## use option -S to test the script locally
 ## to write to eos, one might replace -o /afs/cern.ch/work/o/ocolegro/test/ with -e /store/user/ocolegro/test.
+
+# Running Digi Code
+
+The source and include files for the digitizer code are kept in the userlib folder. The main is in digitizer.cpp and is in the folder test. To compile, run make inside the userlib folder. Check the option parser in digitizer.cpp to see the options to pass and and see submitDigiUMN.py to see the format of the options.
