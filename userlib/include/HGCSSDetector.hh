@@ -6,34 +6,29 @@
 #include <map>
 #include "TH2D.h"
 
-enum DetectorEnum {
-	FECAL, MECAL, BECAL, FHCAL, BHCAL1, BHCAL2
-};
+enum DetectorEnum {ECAL, HCAL};
 
 class HGCSSSubDetector {
 
 public:
 	HGCSSSubDetector() :
-			type(FECAL), name(""), layerIdMin(0), layerIdMax(0), mipWeight(1), absWeight(
-					1), gevWeight(1), gevOffset(0), isSi(false), isScint(false), radiusLim(
-					0) {
+		type(ECAL), name(""), layerIdMin(0), layerIdMax(0), mipWeight(1), absWeight(1),
+                gevWeight(1), gevOffset(0), isSi(false), isScint(false), radiusLim(0) {
 	}
 	;
-	~HGCSSSubDetector() {
-	}
-	;
+	~HGCSSSubDetector() {};
 
 	DetectorEnum type;
-	std::string name;
-	unsigned layerIdMin;
-	unsigned layerIdMax;
-	double mipWeight;
-	double absWeight;
-	double gevWeight;
-	double gevOffset;
-	bool isSi;
-	bool isScint;
-	double radiusLim;
+	std::string  name;
+	unsigned     layerIdMin;
+	unsigned     layerIdMax;
+	double       mipWeight;
+	double       absWeight;
+	double       gevWeight;
+	double       gevOffset;
+	bool         isSi;
+	bool         isScint;
+	double       radiusLim;
 
 	inline unsigned nLayers() const {
 		return (layerIdMax - layerIdMin);
@@ -47,128 +42,53 @@ private:
 class HGCSSDetector {
 
 public:
-	friend HGCSSDetector & theDetector();
+	friend HGCSSDetector &theDetector();
 
 	inline void initialiseIndices(const unsigned versionNumber) {
 
 		indices_.clear();
-		indices_.resize(7, 0);
+		indices_.resize(3, 0);
+
 		//fill layer indices
-		if (versionNumber == 22) {
-			indices_[4] = 0;
-			indices_[5] = 10;
-			indices_[6] = 10;
-		} else if (versionNumber == 28 || versionNumber == 32) {
-			indices_[4] = 0;
-			indices_[5] = 12;
-			indices_[6] = 12;
-		} else if (versionNumber == 23) {
-			indices_[3] = 0;
-			indices_[4] = 38;
-			indices_[5] = 47;
-			indices_[6] = 54;
-		} else if (versionNumber == 21) {
-			indices_[3] = 0;
-			indices_[4] = 24;
-			indices_[5] = 34;
-			indices_[6] = 34;
-		} else if (versionNumber == 27 || versionNumber == 31) {
-			indices_[3] = 0;
-			indices_[4] = 12;
-			indices_[5] = 24;
-			indices_[6] = 24;
-		} else if (versionNumber == 38) {
-			indices_[3] = 0;
-			indices_[4] = 11;
-			indices_[5] = 23;
-			indices_[6] = 23;
-		} else if (versionNumber == 39) {
-			indices_[3] = 0;
-			indices_[4] = 9;
-			indices_[5] = 21;
-			indices_[6] = 21;
-		} else if (versionNumber < 20) {
+		if (versionNumber == 1) {
 			indices_[0] = 0;
-			indices_[1] = versionNumber == 8 ? 11 : 10;
-			indices_[2] = versionNumber == 8 ? 21 : 20;
-			indices_[3] = versionNumber == 8 ? 31 : 30;
-			indices_[4] = indices_[3];
-			indices_[5] = indices_[3];
-			indices_[6] = indices_[3];
-		} else if (versionNumber == 30
-				|| (versionNumber >= 100 && versionNumber < 104)) {
+			indices_[1] = 26;
+                        indices_[2] = 41;
+		} else if (versionNumber == 2) {
+		        indices_[0] = 0;
+			indices_[1] = 26;
+                        indices_[2] = 26;
+                } else if (versionNumber == 3) {
+                        indices_[0] = 0;
+			indices_[1] = 26;
+                        indices_[2] = 41;
+		} else if (versionNumber == 4) {
+                	indices_[0] = 0;
+			indices_[1] = 26;
+                        indices_[2] = 26;
+		} else if (versionNumber == 5) {
+	        	indices_[0] = 0;
+			indices_[1] = 42;
+                        indices_[2] = 57;
+		} else if (versionNumber == 6) {
 			indices_[0] = 0;
-			indices_[1] = 10;
-			indices_[2] = 20;
-			indices_[3] = 28;
-			indices_[4] = indices_[3];
-			indices_[5] = indices_[3];
-			indices_[6] = indices_[3];
-		} else if (versionNumber == 33) {
+			indices_[1] = 43;
+                        indices_[2] = 43;
+                } else if (versionNumber == 7) {
 			indices_[0] = 0;
-			indices_[1] = 10;
-			indices_[2] = 20;
-			indices_[3] = 28;
-			indices_[4] = 40;
-			indices_[5] = 52;
-			indices_[6] = 52;
-		} else if (versionNumber == 34) {
+			indices_[1] = 42;
+                        indices_[2] = 57;
+		} else if (versionNumber == 8) {
 			indices_[0] = 0;
-			indices_[1] = 8;
-			indices_[2] = 16;
-			indices_[3] = 24;
-			indices_[4] = indices_[3];
-			indices_[5] = indices_[3];
-			indices_[6] = indices_[3];
-		} else if (versionNumber == 35) {
-			indices_[0] = 0;
-			indices_[1] = 6;
-			indices_[2] = 12;
-			indices_[3] = 18;
-			indices_[4] = indices_[3];
-			indices_[5] = indices_[3];
-			indices_[6] = indices_[3];
-		} else if (versionNumber == 36) {
-			indices_[0] = 0;
-			indices_[1] = 8;
-			indices_[2] = 16;
-			indices_[3] = 24;
-			indices_[4] = 35;
-			indices_[5] = 47;
-			indices_[6] = 47;
-		} else if (versionNumber == 37) {
-			indices_[0] = 0;
-			indices_[1] = 6;
-			indices_[2] = 12;
-			indices_[3] = 18;
-			indices_[4] = 27;
-			indices_[5] = 39;
-			indices_[6] = 39;
-		} else if (versionNumber == 110) {
-			indices_[0] = 0;
-			indices_[1] = 4;
-			indices_[2] = indices_[1];
-			indices_[3] = indices_[1];
-			indices_[4] = indices_[1];
-			indices_[5] = indices_[1];
-			indices_[6] = indices_[1];
-		} else {
-			indices_[0] = 0;
-			indices_[1] = versionNumber == 24 ? 11 : 10;
-			indices_[2] = versionNumber == 24 ? 21 : 20;
-			indices_[3] = versionNumber == 24 ? 31 : 30;
-			indices_[4] = versionNumber == 24 ? 55 : 42;
-			indices_[5] = versionNumber == 24 ? 65 : 54;
-			indices_[6] = versionNumber == 24 ? 65 : 54;
-		}
+			indices_[1] = 42;
+                        indices_[2] = 42;
+                }
+        
+	};
 
-	}
-	;
+	void buildDetector(const unsigned versionNumber);
 
-	void buildDetector(const unsigned versionNumber, bool concept = true,
-			bool isCaliceHcal = false, bool bypassR = false);
-
-	const HGCSSSubDetector & subDetectorByLayer(const unsigned aLayer);
+	const HGCSSSubDetector &subDetectorByLayer(const unsigned aLayer);
 
 	unsigned getSection(const unsigned aLayer) const;
 	inline unsigned section(const DetectorEnum adet) {
@@ -178,7 +98,7 @@ public:
 	}
 	;
 
-	void addSubdetector(const HGCSSSubDetector & adet);
+	void addSubdetector(const HGCSSSubDetector &adet);
 
 	void finishInitialisation();
 
@@ -192,8 +112,8 @@ public:
 	}
 	;
 
-	const HGCSSSubDetector & subDetectorByEnum(DetectorEnum adet);
-	inline const HGCSSSubDetector & subDetectorBySection(
+	const HGCSSSubDetector &subDetectorByEnum(DetectorEnum adet);
+	inline const HGCSSSubDetector &subDetectorBySection(
 			const unsigned aSection) const {
 		return subdets_[aSection];
 	}
@@ -226,29 +146,25 @@ public:
 
 	void reset();
 
-	void printDetector(std::ostream & aOs) const;
+	void printDetector(std::ostream &aOs) const;
 
 private:
-	HGCSSDetector() {
-		bypassRadius_ = false;
-	}
-	;
+	HGCSSDetector() {};
 
 	~HGCSSDetector() {
 		reset();
 	}
 	;
 
-	std::vector<HGCSSSubDetector> subdets_;
-	std::vector<unsigned> indices_;
-	std::vector<unsigned> section_;
+	std::vector<HGCSSSubDetector>    subdets_;
+	std::vector<unsigned>            indices_;
+	std::vector<unsigned>            section_;
 	std::map<DetectorEnum, unsigned> enumMap_;
 
 	unsigned nLayers_;
 	unsigned nSections_;
-	bool bypassRadius_;
 };
 
-HGCSSDetector & theDetector();
+HGCSSDetector &theDetector();
 
 #endif
