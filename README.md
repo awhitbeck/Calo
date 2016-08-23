@@ -44,4 +44,4 @@ for i in `seq 0 5`; do python submitProdLPC_v2.py  -r ${i} -o /afs/cern.ch/work/
 
 # Running Digi Code
 
-The source and include files for the digitizer code are kept in the userlib folder. The main is in digitizer.cpp and is in the folder test. To compile, run make inside the userlib folder. Check the option parser in digitizer.cpp to see the options to pass and and see submitDigiUMN.py to see the format of the options.
+The source and include files for the digitizer code are kept in the userlib/ folder. The main is in digitizer.cpp which itself is in the folder test/. To compile, run make inside the userlib folder. Check the option parser in the main of digitizer.cpp to see the options to pass and see submitDigiUMN.py to see the format of the options.
