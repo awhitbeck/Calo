@@ -2,66 +2,86 @@
 
 import math
 import random
-import optparse
+import argparse
 import os
 
 from time import strftime 
 
-usage = 'usage: %prog [options]'
-parser = optparse.OptionParser(usage)
-parser.add_option('-r', '--particle'   , dest='particle', help='choose particle PDG or name'  , default=-1)
-parser.add_option('-f', '--filename'   , dest='filename', help='lhe file name'                , default='electrons')
-parser.add_option('-n', '--nevts'      , dest='nevts'   , help='number of events'             , default=100, type=int)
-parser.add_option('-e', '--energy'     , dest='energy'  , help='energy of events in GeV'      , default=4  , type=float)
-parser.add_option('-p', '--phi'        , dest='phi'     , help='set phi angle in degrees'     , default=0  , type=float)
-parser.add_option('-t', '--theta'      , dest='theta'   , help='set theta angle in degrees'   , default=0  , type=float)
-parser.add_option('-x', '--xcoordinate', dest='x'       , help='x-ccordinate'                 , default=0  , type=float)
-parser.add_option('-y', '--ycoordinate', dest='y'       , help='y-ccordinate'                 , default=0  , type=float)
-parser.add_option('-z', '--zcoordinate', dest='z'       , help='z-ccordinate'                 , default=-50, type=float)
-parser.add_option('-o', '--outputdir'  , dest='outDir'  , help='ouput directory'              , default=os.getcwd())
-(opt, args) = parser.parse_args()
+usage = "usage: %prog [arguments]"
+parser = argparse.ArgumentParser(usage)
+parser.add_argument("-r", "--particle"   , dest="particle", help="choose particle PDG or name"  , default=-1)
+parser.add_argument("-n", "--nevts"      , dest="nevts"   , help="number of events"             , default=100, type=int)
+parser.add_argument("-e", "--energy"     , dest="energy"  , help="energy of events in GeV"      , default=4  , type=float)
+parser.add_argument("-p", "--phi"        , dest="phi"     , help="set phi angle in degrees"     , default=0  , type=float)
+parser.add_argument("-t", "--theta"      , dest="theta"   , help="set theta angle in degrees"   , default=0  , type=float)
+parser.add_argument("-x", "--xcoordinate", dest="x"       , help="x-coordinate"                 , default=0  , type=float)
+parser.add_argument("-y", "--ycoordinate", dest="y"       , help="y-coordinate"                 , default=0  , type=float)
+parser.add_argument("-z", "--zcoordinate", dest="z"       , help="z-coordinate"                 , default=-50, type=float)
+parser.add_argument("-o", "--outputdir"  , dest="outDir"  , help="output directory"             , default=os.getcwd())
+arg = parser.parse_args()
 
 particleID = -1
+outDir = arg.outDir
+#Check for trailing slash on ouput dir and delete
+if arg.outDir.split("/")[-1] == "": outDir = arg.outDir[:-1]
+
+if not os.path.isdir(outDir):
+    print "Output directory does not exist!"
+    quit()
 
 #Determine which particle the user selected
-if opt.particle == '11' or opt.particle == 'electron':
-    particleID = 11
-    filename = 'electrons'
-    KE = opt.energy - 0.000510999
-elif opt.particle == '13' or opt.particle == 'muon':
-    particleID = 13
-    filename = 'muons'
-    KE = opt.energy - 0.10565837
-elif opt.particle == '111' or opt.particle == 'pi0':
-    particleID = 111
-    filename = 'pi0s'
-    KE = opt.energy - 0.1349766
-elif opt.particle == '211' or opt.particle == 'pi+':
-    particleID = 211
-    filename = 'pis'
-    KE = opt.energy - 0.1395702
-elif opt.particle == '2112' or opt.particle == 'neutron':
-    particleID = 2112
-    filename = 'neutrons'
-    KE = opt.energy - 0.9395654
-elif opt.particle == '-2112' or opt.particle == 'antineutron':
-    particleID = -2112
-    filename = 'antineutrons'
-    KE = opt.energy - 0.9395654
-elif opt.particle == '130' or opt.particle == 'KL':
-    particleID = 130
-    filename = 'KLs'
-    KE = opt.energy - 0.497648
-elif opt.particle == '22' or opt.particle == 'photon':
-    particleID = 22
-    filename = 'photons'
-    KE = opt.energy
+if arg.particle == "11" or arg.particle == "electron":
+    particleID  = 11
+    fileoutBase = "electrons"
+    outDir      = outDir+"/electrons"
+    KineticE    = arg.energy - 0.000510999
+elif arg.particle == "13" or arg.particle == "muon":
+    particleID  = 13
+    fileoutBase = "muons"
+    outDir      = outDir+"/muons"
+    KineticE    = arg.energy - 0.10565837
+elif arg.particle == "12" or arg.particle == "neutrino":
+    particleID  = 12
+    fileoutBase = "neutrinos"
+    outDir      = outDir+"/neutrinos"
+    KineticE    = arg.energy
+elif arg.particle == "111" or arg.particle == "pi0":
+    particleID  = 111
+    fileoutBase = "pi0s"
+    KineticE    = arg.energy - 0.1349766
+    outDir      = outDir+"/pions/pi0s"
+elif arg.particle == "211" or arg.particle == "pi+":
+    particleID  = 211
+    fileoutBase = "pis"
+    KineticE    = arg.energy - 0.1395702
+    outDir      = outDir+"/pions/pis"
+elif arg.particle == "2112" or arg.particle == "neutron":
+    particleID  = 2112
+    fileoutBase = "neutrons"
+    KineticE    = arg.energy - 0.9395654
+    outDir      = outDir+"/neutrons"
+elif arg.particle == "-2112" or arg.particle == "antineutron":
+    particleID  = -2112
+    fileoutBase = "antineutrons"
+    KineticE    = arg.energy - 0.9395654
+    outDir      = outDir+"/antineutrons"
+elif arg.particle == "130" or arg.particle == "KL":
+    particleID  = 130
+    fileoutBase = "KLs"
+    KineticE    = arg.energy - 0.497648
+    outDir      = outDir+"/KLs"
+elif arg.particle == "22" or arg.particle == "photon":
+    particleID  = 22
+    fileoutBase = "photons"
+    KineticE    = arg.energy
+    outDir      = outDir+"/photons"
 
 # Check to see that particle has changed
 if particleID == -1:
     print "\nInvalid particle selected.\n"
     print "Usage can include:\n"
     print "11    or electron"
+    print "12    or neutrino"
     print "13    or muon"
     print "111   or pi0"
     print "211   or pi+"
@@ -71,24 +91,21 @@ if particleID == -1:
     print "22    or photon\n"
     quit()
 
-lhefile = open('%s/%d_%gGeV_phi%s_theta%s_x%s_y%s_z%s_%s.lhe'%(opt.outDir,opt.nevts,opt.energy,opt.phi,opt.theta,opt.x,opt.y,opt.z,filename), 'w')
-lhefile.write('<header>\n')
-lhefile.write('This file contains primary %s.\n'%(filename))
-lhefile.write('Do not edit this file manually.\n')
-lhefile.write('File created on %s at %s\n'%(strftime('%Y-%m-%d'),strftime('%H:%M:%S')))
-lhefile.write('</header>\n')
+lhefile = open("%s/%d_%gGeV_phi%g_theta%g_x%g_y%g_z%g_%s.lhe"%(outDir,arg.nevts,arg.energy,arg.phi,arg.theta,arg.x,arg.y,arg.z,fileoutBase), "w")
+lhefile.write("<header>\n")
+lhefile.write("This file contains primary %s.\n"%(fileoutBase))
+lhefile.write("Do not edit this file manually.\n")
+lhefile.write("File created on %s at %s\n"%(strftime("%Y-%m-%d"),strftime("%H:%M:%S")))
+lhefile.write("</header>\n")
 
-px = math.sin(math.radians(opt.theta))*math.cos(math.radians(opt.phi))
-py = math.sin(math.radians(opt.theta))*math.sin(math.radians(opt.phi))
-pz = math.cos(math.radians(opt.theta))
+px = math.sin(math.radians(arg.theta))*math.cos(math.radians(arg.phi))
+py = math.sin(math.radians(arg.theta))*math.sin(math.radians(arg.phi))
+pz = math.cos(math.radians(arg.theta))
 
-for i in range(0,opt.nevts):
+for i in range(0,arg.nevts):
 
-    lhefile.write('<event>\n')
-
-    lhefile.write('%s %g %g %g %g %g %g %g\n'%(particleID,opt.x,opt.y,opt.z,px,py,pz,KE))
-
-    lhefile.write('</event>\n')
+    lhefile.write("<event>\n")
+    lhefile.write("%s %g %g %g %g %g %g %g\n"%(particleID,arg.x,arg.y,arg.z,px,py,pz,KineticE))
+    lhefile.write("</event>\n")
 
 lhefile.close()
-
