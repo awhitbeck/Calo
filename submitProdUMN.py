@@ -11,20 +11,18 @@ random.seed()
 
 usage = "usage: %prog [options]"
 parser = argparse.ArgumentParser(usage)
-parser.add_argument("-m", "--model"      , dest="model"      , help="set detector model (0-3)"      , default=0, type=int)
-parser.add_argument("-v", "--version"    , dest="version"    , help="set detector version (1-10)"   , default=8, type=int)
-parser.add_argument("-b", "--Bfield"     , dest="Bfield"     , help="B field value in Tesla"        , default=0, type=float)
-parser.add_argument("-f", "--lhefile"   , dest="lhefile"   , help="name of files in directory", required=True)
-#parser.add_argument("-d", "--directory"  , dest="lheDir"     , help="directory containing lhe files", required=True)
-parser.add_argument("-j", "--numjobs"  , dest="numjobs"     , help="number of jobs to run", default=1, type=int)
-parser.add_argument("-o", "--dataOutDir" , dest="dataOutDir" , help="directory to output root files", required=True)
-parser.add_argument("-S", "--no-submit"  , action="store_true", dest="nosubmit" , help="Do not submit batch job.")
+parser.add_argument("-m", "--model"     , dest="model"       , help="set detector model (0-3)"      , default=0, type=int)
+parser.add_argument("-v", "--version"   , dest="version"     , help="set detector version (1-7)"    , default=2, type=int)
+parser.add_argument("-b", "--Bfield"    , dest="Bfield"      , help="B field value in Tesla"        , default=0, type=float)
+parser.add_argument("-f", "--lhefile"   , dest="lhefile"     , help="name of files in directory"    , required=True)
+parser.add_argument("-j", "--numjobs"   , dest="numjobs"     , help="number of jobs to run"         , default=1, type=int)
+parser.add_argument("-o", "--dataOutDir", dest="dataOutDir"  , help="directory to output root files", required=True)
+parser.add_argument("-S", "--no-submit" , action="store_true", dest="nosubmit" , help="Do not submit batch job.")
 arg = parser.parse_args()
 
 #lheDir = arg.lheDir
 dataOutDir = arg.dataOutDir
 # Check for trailing slash on lhedir and outdir and delete
-#if arg.lheDir.split("/")[-1] == "": lheDir = arg.lheDir[:-1]
 if arg.dataOutDir.split("/")[-1] == "": dataOutDir = arg.dataOutDir[:-1]
 
 filename = arg.lhefile.split("/")[-1]
@@ -35,10 +33,6 @@ outFilename = str(filename.split(".lhe")[0])
 particle = filename.split("_")[-1].split(".lhe")[0]
 
 # Check that the lhe and output directories exist
-#if not os.path.exists(lheDir):
-#    print "Provided lhe directory \"%s\" does not exist!"%(lheDir)
-#    quit()
-
 if not os.path.exists(dataOutDir):
     print "Provided output directory \"%s\" does not exist!"%(dataOutDir)
     quit()
@@ -79,15 +73,13 @@ condorSubmit = open("%s/condorSubmit"%(outDir), "w")
 condorSubmit.write("Executable          =  %s\n" % scriptFile.name)
 condorSubmit.write("Universe            =  vanilla\n")
 condorSubmit.write("Requirements        =  Arch==\"X86_64\"  &&  (Machine  !=  \"zebra01.spa.umn.edu\")  &&  (Machine  !=  \"zebra02.spa.umn.edu\")  &&  (Machine  !=  \"zebra03.spa.umn.edu\")  &&  (Machine  !=  \"zebra04.spa.umn.edu\")\n")
-#condorSubmit.write("Should_Transfer_Files = YES\n")
-#condorSubmit.write("WhenToTransferOutput = ON_EXIT\n")
 condorSubmit.write("+CondorGroup        =  \"cmsfarm\"\n")
 condorSubmit.write("getenv              =  True\n")
 condorSubmit.write("Request_Memory      =  4 Gb\n")
 condorSubmit.write("Log         =  %s.log\n" % outDir)
 
 
-for job in xrange(10000-arg.numjobs,10000):
+for job in xrange(0,arg.numjobs):
 
     nevts = int(filename.split("_")[0])
     outFilename = str(filename.split(".lhe")[0])
