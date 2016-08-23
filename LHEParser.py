@@ -48,5 +48,3 @@ for j in range(0,len(linesList)):
 
 lhefile.close()
 f.close()
-
-
