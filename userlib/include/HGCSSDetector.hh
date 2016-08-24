@@ -52,36 +52,32 @@ public:
 		//fill layer indices
 		if (versionNumber == 1) {
 			indices_[0] = 0;
-			indices_[1] = 26;
-                        indices_[2] = 41;
+			indices_[1] = 40;
+                        indices_[2] = 55;
 		} else if (versionNumber == 2) {
 		        indices_[0] = 0;
-			indices_[1] = 26;
-                        indices_[2] = 26;
+			indices_[1] = 40;
+                        indices_[2] = 40;
                 } else if (versionNumber == 3) {
                         indices_[0] = 0;
-			indices_[1] = 26;
-                        indices_[2] = 41;
+			indices_[1] = 0;
+                        indices_[2] = 15;
 		} else if (versionNumber == 4) {
                 	indices_[0] = 0;
-			indices_[1] = 26;
-                        indices_[2] = 26;
+			indices_[1] = 0;
+                        indices_[2] = 0;
 		} else if (versionNumber == 5) {
 	        	indices_[0] = 0;
-			indices_[1] = 42;
-                        indices_[2] = 57;
+			indices_[1] = 40;
+                        indices_[2] = 55;
 		} else if (versionNumber == 6) {
 			indices_[0] = 0;
-			indices_[1] = 43;
-                        indices_[2] = 43;
+			indices_[1] = 0;
+                        indices_[2] = 15;
                 } else if (versionNumber == 7) {
 			indices_[0] = 0;
-			indices_[1] = 42;
-                        indices_[2] = 57;
-		} else if (versionNumber == 8) {
-			indices_[0] = 0;
-			indices_[1] = 42;
-                        indices_[2] = 42;
+			indices_[1] = 40;
+                        indices_[2] = 40;
                 }
         
 	};
