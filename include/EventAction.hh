@@ -39,38 +39,35 @@ public:
 	void Add(std::vector<SamplingSection> *newDetector) {
 		detector_ = newDetector;
 	}
-	inline void SetWait(G4bool wait) {
-		wait_ = wait;
-	}
-	;
-	inline G4bool GetWait() {
-		return wait_;
-	}
-	;
-	inline G4bool firstPass() {
+
+	inline G4bool doFast() {
 		return doFast_;
 	}
 	;
-	HGCSSGenParticleVec genvec_,hadvec_,incvec_,escapevec_,novelVec_;
+	template <typename T>
+	void FreeAll( T & t ) {
+	    T tmp;
+	    using std::swap;
+	    t.swap( tmp );
+	}
+
+	HGCSSGenParticleVec hadvec_,incvec_,escapevec_;//,novelVec_;//,genvec_;
 	G4int evtNb_;
 	G4int hadronicInts;
 	std::vector<G4double> targetPartEngs;
-	std::vector<G4int> novelPartEngs;
+	static constexpr G4double minEng  = 3000;
+	static constexpr G4double initEng = 3100;
+	static constexpr G4int    initPdgid = 22;
 private:
-	HGCSSSamplingSectionVec ssvec_;
 	std::vector<SamplingSection> *detector_;
 	G4int printModulo,initLayer;
-	G4bool wait_;
 	G4bool doFast_;
 	HGCSSSimHitVec hitvec_;
 	HGCSSGeometryConversion* geomConv_;
 	TFile *outF_;
 	TTree *tree_;
 	HGCSSEvent event_;
-
 	EventActionMessenger* eventMessenger;
-
-	//std::ofstream fout_;
 
 };
 
