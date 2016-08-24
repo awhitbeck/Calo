@@ -123,28 +123,69 @@ SeededGeneratorAction::~SeededGeneratorAction() {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+
+void SeededGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
+	G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
+	G4String particleName;
+	G4ParticleDefinition* particle = particleTable->FindParticle(eventAction_->initPdgid);
+	particleGun->SetParticleDefinition(particle);
+
+	int currentEvt = anEvent->GetEventID();
+	if (currentEvt < tree_->GetEntries() ){
+		tree_->GetEntry(currentEvt);
+
+	}
+	else{
+		G4RunManager::GetRunManager()->AbortRun();
+	}
+
+	PipeData();
+	CLHEP::HepRandom::restoreEngineStatus ("temp.rndm");
+
+
+	G4double et = eventAction_->initEng * MeV;
+	particleGun->SetParticleEnergy(et);
+	particleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
+
+	G4double x0 = 0.0;
+	G4double y0 = 0.0;
+	G4double z0 = -0.5 * (Detector->GetWorldSizeZ());
+
+	particleGun->SetParticlePosition(G4ThreeVector(x0, y0, z0));
+	TVector3 vec(x0,y0,z0);
+
+	if (currentGenerator) {
+		G4cout << "Generating an event " <<G4endl;
+		currentGenerator->GeneratePrimaryVertex(anEvent);
+	} else
+		G4Exception("PrimaryGeneratorAction::GeneratePrimaries",
+				"PrimaryGeneratorAction001", FatalException,
+				"generator is not instanciated.");
+
+
+}
+
+/*
 void SeededGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
 
 	G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
 	G4String particleName;
 
-	G4ParticleDefinition* particle = particleTable->FindParticle(22);
+	G4ParticleDefinition* particle = particleTable->FindParticle(eventAction_->initPdgid);
 	particleGun->SetParticleDefinition(particle);
 	int currentEvt = anEvent->GetEventID();
-	tree_->GetEntry(currentEvt);
-	G4double et = 0.0;
+	G4cout << "Seeded event generator is getting event " << currentEvt << G4endl;
+
+	//tree_->GetEntry(currentEvt);
+	G4double et = eventAction_->initEng * MeV;
 	CLHEP::HepRandom::restoreEngineStatus ("temp.rndm");
 	PipeData();
 
 	if (inc_->size() >  0){
-		eventAction_->SetWait(true);
-		et = 2950;
-	}
-	else{
-		eventAction_->SetWait(false);
+		et = eventAction_->initEng * MeV;
 	}
 
-	particleGun->SetParticleEnergy(et * MeV);
+	particleGun->SetParticleEnergy(et);
 	particleGun->SetParticleMomentumDirection(G4ThreeVector(0., 0., 1.));
 
 	G4double y0 = 0;
@@ -160,8 +201,8 @@ void SeededGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
 	genPart.pdgid(pdgid);
 
 	if (currentGenerator) {
+		G4cout << "We are in currentGenerator section of SeededGen" << G4endl;
 		currentGenerator->GeneratePrimaryVertex(anEvent);
-		eventAction_->genvec_.push_back(genPart);
 	} else
 		G4Exception("SeededGeneratorAction::GeneratePrimaries",
 				"PrimaryGeneratorAction001", FatalException,
@@ -169,6 +210,6 @@ void SeededGeneratorAction::GeneratePrimaries(G4Event* anEvent) {
 
 
 }
-
+*/
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
