@@ -11,16 +11,15 @@ random.seed()
 
 usage = "usage: %prog [options]"
 parser = argparse.ArgumentParser(usage)
-parser.add_argument("-m", "--model"     , dest="model"       , help="set detector model (0-3)"      , default=0, type=int)
-parser.add_argument("-v", "--version"   , dest="version"     , help="set detector version (1-7)"    , default=2, type=int)
+parser.add_argument("-m", "--model"     , dest="model"       , help="set detector model (0-3)"      , default=2, type=int)
+parser.add_argument("-v", "--version"   , dest="version"     , help="set detector version (1-7)"    , default=1, type=int)
 parser.add_argument("-b", "--Bfield"    , dest="Bfield"      , help="B field value in Tesla"        , default=0, type=float)
-parser.add_argument("-f", "--lhefile"   , dest="lhefile"     , help="name of files in directory"    , required=True)
+parser.add_argument("-f", "--lhefile"   , dest="lhefile"     , help="name of file in directory"     , required=True)
 parser.add_argument("-j", "--numjobs"   , dest="numjobs"     , help="number of jobs to run"         , default=1, type=int)
 parser.add_argument("-o", "--dataOutDir", dest="dataOutDir"  , help="directory to output root files", required=True)
 parser.add_argument("-S", "--no-submit" , action="store_true", dest="nosubmit" , help="Do not submit batch job.")
 arg = parser.parse_args()
 
-#lheDir = arg.lheDir
 dataOutDir = arg.dataOutDir
 # Check for trailing slash on lhedir and outdir and delete
 if arg.dataOutDir.split("/")[-1] == "": dataOutDir = arg.dataOutDir[:-1]
@@ -100,7 +99,6 @@ for job in xrange(0,arg.numjobs):
     g4Macro.write("/run/initialize\n")
     g4Macro.write("/run/beamOn %d\n"%(nevts))
     g4Macro.close()
-
 
 condorSubmit.close()
 

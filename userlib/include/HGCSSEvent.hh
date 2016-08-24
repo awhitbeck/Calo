@@ -83,6 +83,16 @@ public:
 		dep_ = dep;
 	}
 	;
+        inline void wgtDep(double wgtDep) {
+		wgtDep_ = wgtDep;
+	}
+	;
+        inline double wgtDep() {
+		return  wgtDep_;
+	}
+	;
+
+
 private:
 
 	unsigned event_;
@@ -91,6 +101,7 @@ private:
 	double zvtx_;
 	double steelThick_;
 	double dep_;
+        double wgtDep_;
 	TVector3 seeds_,status_;
 
 ClassDef(HGCSSEvent,1);

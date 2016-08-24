@@ -42,6 +42,42 @@ HGCSSGeometryConversion::~HGCSSGeometryConversion() {
 	hexaGeom.clear();
 }
 
+void HGCSSGeometryConversion::initialiseSquareMap(const double xymin, const double side) {
+        initialiseSquareMap(squareMap(), xymin, side, true);
+        fillXY(squareMap(), squareGeom);
+}
+
+void HGCSSGeometryConversion::initialiseSquareMap(TH2Poly *map,
+        const double xymin, const double side, bool print) {
+        unsigned nx = static_cast<unsigned>(xymin * 2. / side);
+        unsigned ny = nx;
+        unsigned i, j;
+
+        Double_t x1, y1, x2, y2;
+        Double_t dx = side, dy = side;
+        x1 = -1. * xymin;
+        x2 = x1 + dx;
+
+        for (i = 0; i < nx; i++) {
+                y1 = -1. * xymin;
+                y2 = y1 + dy;
+                for (j = 0; j < ny; j++) {
+                        map->AddBin(x1, y1, x2, y2);
+                        y1 = y2;
+                        y2 = y1 + dy;
+                }
+                x1 = x2;
+                x2 = x1 + dx;
+        }
+
+        if (print) {
+                std::cout << " -- Initialising squareMap with parameters: " << std::endl
+                        << " ---- xymin = " << -1. * xymin << ", side = " << side
+                        << ", nx = " << nx << ", ny=" << ny << std::endl;
+        }
+
+}
+
 void HGCSSGeometryConversion::initialiseHoneyComb(const double width, const double side) {
 
 	initialiseHoneyComb(hexagonMap(), width, side, true);
@@ -280,9 +316,14 @@ void HGCSSGeometryConversion::resetVector(std::vector<TH2Poly*> &aVec,
 
 				if (print && aVar.find("EmipHits") != aVar.npos)
 					std::cout << " ---- Layer " << iL;
-				initialiseHoneyComb(aVec[iL], width_, cellSize_,
-							print && aVar.find("EmipHits") != aVar.npos);
+                                if (aDet.isScint) {
+                                        double newcellsize = 10. * getGranularity(iL, aDet);
+                                        initialiseSquareMap(aVec[iL], width_, newcellsize, print && aVar.find("EmipHits") != aVar.npos);
 
+				} else { 
+                                        initialiseHoneyComb(aVec[iL], width_, cellSize_,
+							print && aVar.find("EmipHits") != aVar.npos);
+                                }
 			}
 		}
 	}
