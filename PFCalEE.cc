@@ -44,16 +44,18 @@ int main(int argc, char** argv) {
 	int version = DetectorConstruction::TEH;
 	int model = DetectorConstruction::m_FULLSECTION;
 
-	int signal = 1;
+	int generator = 0;int speed = 0;
 	std::string data = "";
 	if (argc > 2)
 		version = atoi(argv[2]);
 	if (argc > 3)
 		model = atoi(argv[3]);
 	if (argc > 4)
-		signal = atoi(argv[4]);
+		generator = atoi(argv[4]);
 	if (argc > 5)
-		data = argv[5];
+		speed = atoi(argv[5]);
+	if (argc > 6)
+		data = argv[6];
 
 	std::cout << "-- Running version " << version << " model " << model
 			<< std::endl;
@@ -63,11 +65,11 @@ int main(int argc, char** argv) {
 	runManager->SetUserInitialization(new PhysicsList);
 
 	// Set user action classes
-	runManager->SetUserAction(new EventAction(signal));
-	runManager->SetUserAction(new SteppingAction(data));
+	runManager->SetUserAction(new EventAction(speed));
+	runManager->SetUserAction(new SteppingAction());
 	runManager->SetUserAction(new StackingAction(data));
 
-	   if (signal == 1 and data =="") {
+	   if (generator == 0) {
 		   G4cout << "Setting to LHE primary" << G4endl;
 		   runManager->SetUserAction(new LHEPrimaryGeneratorAction(model));
 	   }
