@@ -26,7 +26,19 @@ public:
 	}
 	;
 
-	std::map<int, std::pair<double, double> > hexaGeom;
+        TH2Poly *squareMap() {
+                static TH2Poly hsq;
+                return &hsq;
+        }
+        ;
+
+        std::map<int, std::pair<double, double> > hexaGeom;
+        std::map<int, std::pair<double, double> > squareGeom;
+
+        void initialiseSquareMap(const double xymin, const double side);
+
+        void initialiseSquareMap(TH2Poly *map, const double xymin,
+                        const double side, bool print);
 
 	void initialiseHoneyComb(const double xymin, const double side);
 

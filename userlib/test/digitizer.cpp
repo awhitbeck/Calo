@@ -82,44 +82,71 @@ void extractParameterFromStr(std::string aStr, T &vec) {
 	} //loop on elements
 }
 
-void processHist(unsigned int layer, TH2Poly* histE, TH2Poly* histN, std::vector<TH2Poly*> histNTot, HGCSSDigitisation &myDigitiser, const HGCSSSubDetector &subdet, const std::vector<unsigned> &pThreshInADC) {
+std::pair<double,int> processHist(unsigned int layer, TH2Poly* histE, TH2Poly* histN, std::vector<TH2Poly*> histNTot, HGCSSDigitisation &myDigitiser, const HGCSSSubDetector &subdet, const std::vector<unsigned> &pThreshInADC) {
+        DetectorEnum adet = subdet.type;
+        bool isSi         = subdet.isSi;
+        bool isScint      = subdet.isScint;
 
-	DetectorEnum adet = subdet.type;
-	bool isSi         = subdet.isSi;
+        double digiETot = 0; // Initialize var for total MIPs sum
+        int    nTotal   = 0; // Initialize var for total num particles
 
-        unsigned int xBins = histE->GetNbinsX();
-        unsigned int yBins = histE->GetNbinsY();
+        TIter next(histE->GetBins());
+        TObject *obj = 0;
+        TH2PolyBin *polyBin = 0;
 
-        for (unsigned int x = 0; x < xBins; x++) {
-                for (unsigned int y = 0; y < yBins; y++) {
+        while ((obj = next())) {
+                polyBin = (TH2PolyBin*) obj;
+                double x = (polyBin->GetXMax() + polyBin->GetXMin()) / 2.;
+                double y = (polyBin->GetYMax() + polyBin->GetYMin()) / 2.;
 
-                        int globalBin = histE->GetBin(x,y);
-                        double digiE = histE->GetBinContent(globalBin);
+                //unsigned int xBins = histE->GetNbinsX();
+                //unsigned int yBins = histE->GetNbinsY();
+                  
+                //for (unsigned int x = 0; x < xBins; x++) {
+                //        for (unsigned int y = 0; y < yBins; y++) {
+                  
+                //                int globalBin = histE->GetBin(x,y);
+                double digiE = polyBin->GetContent();
 
-                        if (digiE == 0) 
-                                continue;
-                        myDigitiser.addNoise(digiE, layer);
-                        //for silicon-based Calo
-                        unsigned adc = 0;
+                if (digiE == 0) 
+                        continue;
 
-                        if (isSi) {
+                if (isScint) {
+                        std::vector<double> simEvec;
+                        simEvec.push_back(digiE);
+                        double side = polyBin->GetXMax() - polyBin->GetXMin();
+                        simEvec.push_back(
+                                        histE->GetBinContent(histE->FindBin(x - side, y)));
+                        simEvec.push_back(
+                                        histE->GetBinContent(histE->FindBin(x + side, y)));
+                        simEvec.push_back(
+                                        histE->GetBinContent(histE->FindBin(x, y - side)));
+                        simEvec.push_back(
+                                        histE->GetBinContent(histE->FindBin(x, y + side)));
+                        double xtalkE = myDigitiser.ipXtalk(simEvec);
 
-                                adc   = myDigitiser.adcConverter(digiE, adet);
-                                digiE = myDigitiser.adcToMIP(adc, adet);
-                        }
-
-                        if (!(isSi && adc > pThreshInADC[layer])) {
-                            
-                                histN->SetBinContent(globalBin, 0);
-                        }
-                        else {
-                                histE->SetBinContent(globalBin, digiE);
-                                double temp = histNTot[layer]->GetBinContent(globalBin) + 1;
-
-                                histNTot[layer]->SetBinContent(globalBin,temp);
+                        if (isScint && xtalkE > 0) {
+                                digiE = myDigitiser.digiE(xtalkE);
                         }
                 }
+                myDigitiser.addNoise(digiE, layer);
+                //for silicon-based Calo
+                unsigned adc = 0;
+
+                if (isSi) {
+
+                        adc   = myDigitiser.adcConverter(digiE, adet);
+                        digiE = myDigitiser.adcToMIP(adc, adet);
+                }
+
+                if ((isSi && adc > pThreshInADC[layer]) || (isScint && digiE > pThreshInADC[layer]*myDigitiser.adcToMIP(1, adet, false))) {
+                        
+                        digiETot += digiE;
+                        nTotal += 1;
+                }
         }
+
+        return std::make_pair(digiETot,nTotal);
 }	//processHist
 
 int main(int argc, char** argv) {	 
@@ -427,16 +454,18 @@ int main(int argc, char** argv) {
                                 histNTot[iL] = histNClone;
                         }
 
-                        processHist(iL, histE, histN, histNTot, myDigitiser, subdet, pThreshInADC);
+                        std::pair<double,int> totals = processHist(iL, histE, histN, histNTot, myDigitiser, subdet, pThreshInADC);
+                        // totals.first is energy layer sum in MIPs
+                        // totals.second is num particles sum
              
-                        int Nintegral = histN->Integral();
-                        double Eintegral = histE->Integral();
+                        //int Nintegral = histN->Integral();
+                        //double Eintegral = histE->Integral();
 
-                        layerSums[iL] = Eintegral;
-                        nHitsHist[iL]->Fill(Nintegral);
-                        MIPsHist[iL]->Fill(Eintegral);
+                        layerSums[iL] = totals.first;
+                        nHitsHist[iL]->Fill(totals.second);
+                        MIPsHist[iL]->Fill(totals.first);
 
-                        eventSum[iL] = Nintegral;
+                        eventSum[iL] = totals.second;
 
                 }
 
@@ -474,12 +503,12 @@ int main(int argc, char** argv) {
 
         outputFile->cd();
         // Loop on every layer and acquire the filled TH2Poly histo summed over all events.
-        for (unsigned iL(0); iL < nLayers; ++iL) {
+        //for (unsigned iL(0); iL < nLayers; ++iL) {
 
-                TH2Poly* histE = geomConv.get2DHist(iL, "E");
-                //histNTot[iL]->Write();
-                //histE->Write();
-        }
+        //        TH2Poly* histE = geomConv.get2DHist(iL, "E");
+        //        histNTot[iL]->Write();
+        //        histE->Write();
+        //}
 
 	outputFile->cd();
 
