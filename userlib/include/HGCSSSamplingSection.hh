@@ -51,14 +51,15 @@ public:
 		return absorberDep_;
 	}
 	;
-    inline double totalNonIonDep() {
-		return totalNonIonE_;
-	}
-	;
 	inline double totalDep() const {
 		return totalRawE_;
 	}
 	;
+	inline double totalNonIonDep() {
+		return totalNonIonE_;
+	}
+	;
+
 	inline double gamDepFrac() const {
 		return gamFrac_;
 	}
@@ -81,19 +82,20 @@ public:
 		return hadFrac_;
 	}
 	;
-    inline double muKinFlux() const {
-		return muKin_;
-	}
-	;
+
 	inline double neutronKinFlux() const {
 		return neutronKin_;
+	}
+	;
+	inline double muKinFlux() const {
+		return muKin_;
 	}
 	;
 	inline double hadKinFlux() const {
 		return hadKin_;
 	}
 	;
-    inline double eleKinFlux() const {
+	inline double eleKinFlux() const {
 		return eleKin_;
 	}
 	;
@@ -101,12 +103,30 @@ public:
 		return gamKin_;
 	}
 	;
-	inline double avgTime() const {
-		return avgTime_;
+
+	inline unsigned muCount() {
+		return muCount_;
 	}
 	;
-    inline unsigned nSiHits() const {
-		return nSiHits_;
+	inline unsigned hadCount() {
+		return hadCount_;
+	}
+	;
+	inline unsigned neutronCount() const {
+		return neutronCount_;
+	}
+	;
+	inline unsigned gamCount() {
+		return gamCount_;
+	}
+	;
+	inline unsigned eleCount() const {
+		return eleCount_;
+	}
+	;
+
+	inline double avgTime() const {
+		return avgTime_;
 	}
 	;
 	inline double eleShowerSize() {
@@ -125,24 +145,8 @@ public:
 		return muShowerSize_;
 	}
 	;
-    inline unsigned neutronCount() const {
-		return neutronCount_;
-	}
-	;
-    inline unsigned hadCount() {
-		return hadCount_;
-	}
-	;
-    inline unsigned muCount() {
-		return muCount_;
-	}
-	;
-	inline unsigned eleCount() const {
-		return eleCount_;
-	}
-	;
-    inline unsigned gamCount() {
-		return gamCount_;
+	inline unsigned nSiHits() const {
+		return nSiHits_;
 	}
 	;
 	//setters
@@ -280,25 +284,29 @@ private:
 	double neutronFrac_;
 	double hadFrac_;
 
-    double muKin_;
+
 	double neutronKin_;
+	double muKin_;
 	double hadKin_;
 	double eleKin_;
 	double gamKin_;
 
-    double avgTime_;
-	unsigned nSiHits_;
 
-    double eleShowerSize_;
+	unsigned muCount_;
+	unsigned hadCount_;
+	unsigned neutronCount_;
+	unsigned gamCount_;
+	unsigned eleCount_;
+
+
+	double eleShowerSize_;
 	double hadShowerSize_;
 	double neutShowerSize_;
 	double muShowerSize_;
 
-    unsigned neutronCount_;
-    unsigned hadCount_;
-	unsigned muCount_;
-   	unsigned eleCount_;
-	unsigned gamCount_;
+
+	double avgTime_;
+	unsigned nSiHits_;
 
 ClassDef(HGCSSSamplingSection,1)
 	;
