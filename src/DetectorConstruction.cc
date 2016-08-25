@@ -148,7 +148,7 @@ void DetectorConstruction::buildHCal(){
 
 		iEleL.push_back(make_pair(3*mm,"Cu"));
 		iEleL.push_back(make_pair(1*mm,"Pb"));
-		iEleL.push_back(make_pair(5*mm,"SSteel"));
+		iEleL.push_back(make_pair(50*mm,"SSteel"));
 		iEleL.push_back(make_pair(0.5*mm,"Cu"));
 		iEleL.push_back(make_pair(9*mm,"Scintillator"));
 		unsigned Nmodule=15;
@@ -295,7 +295,7 @@ void DetectorConstruction::UpdateCalorSize() {
 
 	else if (model_ == DetectorConstruction::m_FULLSECTION) {
 		m_maxTheta = pi / 6.0;
-		cout << "Constructing the model = " << model_ << "Calo." << endl;
+		cout << "Constructing the model = " << model_ << " Calo." << endl;
 
 		cout << "The m_CalorSizeZ " << m_CalorSizeZ << endl;
 		cout << "The maxRadLen " << maxRadLen << endl;
@@ -426,14 +426,11 @@ void DetectorConstruction::buildSectorStack(const unsigned sectorNum,
 				<<",zOffset+zOverburden="<<zOffset+zOverburden
 				<<",width="<<width<<");"<<endl;
 #endif
-				solid = constructSolid(baseName, thick, zOffset + zOverburden,
-						minL, width, i);
-				G4LogicalVolume *logi = new G4LogicalVolume(solid,
-						m_materials[eleName], baseName + "log");
+				solid = constructSolid(baseName, thick, zOffset + zOverburden, minL, width, i, nEle);
+				G4LogicalVolume *logi = new G4LogicalVolume(solid, m_materials[eleName], baseName + "log");
 				m_caloStruct[i].sublayer_X0[ie] = m_materials[eleName]->GetRadlen();
 				m_caloStruct[i].sublayer_dEdx[ie] = m_dEdx[eleName];
-				m_caloStruct[i].sublayer_L0[ie] =
-						m_materials[eleName]->GetNuclearInterLength();
+				m_caloStruct[i].sublayer_L0[ie] = m_materials[eleName]->GetNuclearInterLength();
 				if (sectorNum == 0 || sectorNum == m_nSectors - 1) {
 					G4cout << "************ " << eleName;
 					if (m_nSectors > 1)
@@ -450,7 +447,8 @@ void DetectorConstruction::buildSectorStack(const unsigned sectorNum,
 					G4cout << " TotX0=" << totalLengthX0;
 					totalLengthL0 += m_caloStruct[i].sublayer_thick[ie]
 							/ m_caloStruct[i].sublayer_L0[ie];
-					G4cout << " TotLambda=" << totalLengthL0 << G4endl;
+					G4cout << " TotLambda=" << totalLengthL0;
+					G4cout << " Number of elements=" << nEle << G4endl;
 				}
 
 				if (m_caloStruct[i].isSensitiveElement(ie))
@@ -519,7 +517,7 @@ void DetectorConstruction::fillInterSectorSpace(const unsigned sectorNum,
 			std::string baseName(nameBuf);
 			if (thick > 0) {
 				solid = constructSolid(baseName, thick, zOffset + zOverburden,
-						minL, width, i);
+						minL, width, i, nEle);
 				std::cout << "Constructing layer " << baseName << "phys" << std::endl;
 				G4LogicalVolume *logi = new G4LogicalVolume(solid,
 						m_materials[eleName], baseName + "log");
@@ -582,7 +580,7 @@ void DetectorConstruction::SetDetModel(G4int model) {
 
 G4VSolid *DetectorConstruction::constructSolid(std::string baseName,
 		G4double thick, G4double zpos, const G4double & minL,
-		const G4double & width, size_t which_ele) {
+		const G4double & width, size_t which_ele, const unsigned nEle) {
 	G4VSolid *solid;
 
 	if (which_ele == 0 && (version_ <= T)) {
@@ -590,41 +588,48 @@ G4VSolid *DetectorConstruction::constructSolid(std::string baseName,
 		solid = new G4Box(baseName + "box", width / 2, m_CalorSizeXY / 2,
 				thick / 2);
 		//set the offset!
-		G4cout << "Placing the object " << baseName  << " At the position " << zpos << G4endl;
+		// G4cout << "Placing the object " << baseName  << " At the position " << zpos << G4endl;
 		if (baseName == "W1"){
 			m_z0pos = zpos;
 		}
 	} else {
 		if (model_ == DetectorConstruction::m_FULLSECTION) {
-			G4double hexaRad = 101.59994;//78.0;
-			G4double a[2] = {0,thick},b[2] ={0,0},c[2] = {hexaRad,hexaRad};
+
+			if (nEle >= 6){ // this means that it's ECAL! 
+				G4double hexaRad = 101.59994;//78.0;
+				G4double a[2] = {0,thick},b[2] ={0,0},c[2] = {hexaRad,hexaRad};
 
 
-			G4VSolid* sHexa = new G4Polyhedra(baseName + "box",
-							0, 2 * pi,
-							6, 2,
-							a,b,c);
+				G4VSolid* sHexa = new G4Polyhedra(baseName + "box",
+								0, 2 * pi,
+								6, 2,
+								a,b,c);
 
-			G4ThreeVector trans = G4ThreeVector(0.,2*hexaRad,0);
-			G4ThreeVector zAxis(0,0,1);
-			G4RotationMatrix* rot = new G4RotationMatrix(0,0,0);
-
-			G4UnionSolid* sUnion = new G4UnionSolid(baseName + "box",
-					sHexa,
-					sHexa,
-					rot,
-					trans);
-			for (int i = 1; i < 6; i ++){
 				G4ThreeVector trans = G4ThreeVector(0.,2*hexaRad,0);
+				G4ThreeVector zAxis(0,0,1);
+				G4RotationMatrix* rot = new G4RotationMatrix(0,0,0);
 
-				sUnion = new G4UnionSolid(baseName + "box",
-					sUnion,
-					sHexa,
-					rot,
-					trans.rotate(i*3.14/3,zAxis ));
+				G4UnionSolid* sUnion = new G4UnionSolid(baseName + "box",
+						sHexa,
+						sHexa,
+						rot,
+						trans);
+				for (int i = 1; i < 6; i ++){
+					G4ThreeVector trans = G4ThreeVector(0.,2*hexaRad,0);
+
+					sUnion = new G4UnionSolid(baseName + "box",
+						sUnion,
+						sHexa,
+						rot,
+						trans.rotate(i*3.14/3,zAxis ));
+				}
+
+				solid = sUnion;
 			}
-
-			solid = sUnion;
+			else{
+				G4double hcalXY = 1000.;
+				solid = new G4Box(baseName + "box", hcalXY / 2, hcalXY / 2, thick / 2);
+			}
 		}
 
 		else {

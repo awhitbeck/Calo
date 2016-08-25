@@ -46,7 +46,7 @@ SamplingSection::SamplingSection(std::vector<std::pair <G4double,std::string>> i
 
 				resetCounters();
 				//eventAction_ =(EventAction*) G4RunManager::GetRunManager()->GetUserEventAction();
-				std::cout << " -- End of sampling section initialisation. Input " << aThicknessVec.size() << " elements, constructing " << n_elements << " elements with " << n_sens_elements << " sensitive elements." << std::endl;
+				//std::cout << " -- End of sampling section initialisation. Input " << aThicknessVec.size() << " elements, constructing " << n_elements << " elements with " << n_sens_elements << " sensitive elements." << std::endl;
 
 			};
 

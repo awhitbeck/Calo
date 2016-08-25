@@ -150,7 +150,7 @@ private:
 
 	G4VSolid *constructSolid(std::string baseName, G4double thick,
 			G4double zpos, const G4double & minL, const G4double & width,
-			const size_t which_ele);
+			const size_t which_ele, const unsigned nEle);
 
 	std::vector<G4Material*> m_SensitiveMaterial;
 	G4int initLayer_;
