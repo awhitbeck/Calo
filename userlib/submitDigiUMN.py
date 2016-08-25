@@ -16,7 +16,6 @@ parser.add_argument("-b", "--Bfield"    ,    dest="Bfield"     , help="B field v
 parser.add_argument("-d", "--directory ",    dest="rootDir"    , help="directory containing files"        , required=True)
 #parser.add_argument("-f", "--datafile"  ,    dest="datafile"   , help="name of file", required=True)
 parser.add_argument("-o", "--dataOutDir",    dest="dataOutDir" , help="directory to output digiroot files", required=True)
-
 parser.add_argument("-S", "--no-submit" ,    action="store_true",  dest="nosubmit", help="Do not submit batch job.")
 arg = parser.parse_args()
 
@@ -43,21 +42,16 @@ if not os.path.exists("./temp"): os.mkdir("temp")
 #in %
 interCalib = 3
 
-granularity="0-41:4"
-noise="0-41:0.15"
-threshold="0-41:4"
+granularity="0-55:4"
+noise="0-55:0.15"
+threshold="0-55:4"
 
 suffix="IC%d"%(interCalib)
     
 if arg.model!=2 : suffix="%s_Si%d"%(suffix,nSiLayers)
     
-bval="BOFF"
-if arg.Bfield>0 : bval="BON" 
-
 outDir = os.getcwd()
 
-outlog="%s/digitizer%s.log"%(outDir,suffix)
-g4log="digijob%s.log"%(suffix)
 os.system("mkdir -p %s"%(outDir))
 
 #wrapper
@@ -68,9 +62,7 @@ scriptFile.write("outfilepath=$2\n")
 scriptFile.write("outfilename=$3\n")
 scriptFile.write("source /data/cmszfs1/sw/HGCAL_SIM_A/setup.sh\n")
 scriptFile.write("localdir=`pwd`\n")
-scriptFile.write("./bin/digitizer -N 0 -O ${outfilepath} -F ${outfilename} -I ${infile} $PWD -G %s -S %s -T %s -C %d -L %d | tee %s\n"%(granularity,noise,threshold,interCalib,nSiLayers,outlog))
-scriptFile.write("echo \"--Local directory is \" %s/${outfilename}.root >> %s\n"%(g4log,dataOutDir))
-scriptFile.write("ls * >> %s\n"%(g4log))
+scriptFile.write("./bin/digitizer -N 0 -O ${outfilepath} -F ${outfilename} -I ${infile} $PWD -G %s -S %s -T %s -C %d -L %d\n"%(granularity,noise,threshold,interCalib,nSiLayers))
 scriptFile.write("echo \"All done\"\n")
 scriptFile.close()
 
@@ -106,4 +98,3 @@ os.system("chmod u+rwx %s/runDigiJob.sh"%(outDir))
 command = "condor_submit " + condorSubmit.name + "\n"
 if arg.nosubmit : os.system("echo " + command) 
 else: subprocess.call(command.split())
-       
