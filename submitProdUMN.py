@@ -28,9 +28,6 @@ filename = arg.lhefile.split("/")[-1]
 nevts = int(filename.split("_")[0])
 outFilename = str(filename.split(".lhe")[0])
 
-# Create subdirectory based on particle type
-particle = filename.split("_")[-1].split(".lhe")[0]
-
 # Check that the lhe and output directories exist
 if not os.path.exists(dataOutDir):
     print "Provided output directory \"%s\" does not exist!"%(dataOutDir)
@@ -38,9 +35,6 @@ if not os.path.exists(dataOutDir):
 
 # Check for temp directory and create one if not
 if not os.path.exists("./temp"): os.mkdir("temp")
-
-bval="BOFF"
-if arg.Bfield>0 : bval="BON" 
 
 outDir = os.getcwd()
 outTag="version%d_model%d_%s"%(arg.version,arg.model,outFilename)
@@ -54,13 +48,11 @@ scriptFile.write("source /data/cmszfs1/sw/HGCAL_SIM_A/setup.sh\n")
 scriptFile.write("cd temp\n")
 scriptFile.write("mkdir ${name}_${job}\n")
 scriptFile.write("cd ${name}_${job}\n")
-scriptFile.write("cp $PWD/../../g4steer_${name}_${job}.mac g4steer_${name}_${job}.mac\n")
+scriptFile.write("cp $PWD/../../g4steer_${name}_${job}.mac g4steer.mac\n")
+scriptFile.write("cp $PWD/../../b18d36.dat b18d36.dat\n")
 scriptFile.write("rm $PWD/../../g4steer_${name}_${job}.mac\n")
-scriptFile.write("./../../PFCalEE g4steer_${name}_${job}.mac %d %d 1 | tee g4.log\n"%(arg.version,arg.model))
+scriptFile.write("./../../PFCalEE g4steer.mac %d %d 0\n"%(arg.version,arg.model))
 scriptFile.write("mv PFcal.root %s/HGcal_%s_${job}.root\n"%(dataOutDir,outTag))
-scriptFile.write("localdir=`pwd`\n")
-scriptFile.write("echo \"--Local directory is \" $localdir >> g4.log\n")
-scriptFile.write("ls * >> g4.log\n")
 scriptFile.write("cd ..\n")
 scriptFile.write("rm -r ${name}_${job}\n")
 scriptFile.write("cd ../..\n")
@@ -93,7 +85,6 @@ for job in xrange(0,arg.numjobs):
     g4Macro.write("/run/verbose 0\n")
     g4Macro.write("/event/verbose 0\n")
     g4Macro.write("/tracking/verbose 0\n")
-    g4Macro.write("/N03/det/setField %1.1f T\n"%(arg.Bfield))
     g4Macro.write("/random/setSeeds %d %d\n"%(random.uniform(0,100000000),random.uniform(0,100000000)))
     g4Macro.write("/filemode/inputFilename %s\n"%(arg.lhefile))
     g4Macro.write("/run/initialize\n")
