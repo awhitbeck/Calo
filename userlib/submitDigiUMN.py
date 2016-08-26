@@ -3,58 +3,53 @@
 import os,sys
 import argparse
 import commands
-import math
 import random
 import subprocess
 
+from time import strftime
+
+myTime = strftime("%H%M%S")
 random.seed()
 
 usage = "usage: %prog [options]"
 parser = argparse.ArgumentParser(usage)
 parser.add_argument("-m", "--model"     ,    dest="model"      , help="detector model"                    , default=0, type=int)
-parser.add_argument("-b", "--Bfield"    ,    dest="Bfield"     , help="B field value in Tesla"            , default=0, type=float)
-parser.add_argument("-d", "--directory ",    dest="rootDir"    , help="directory containing files"        , required=True)
-#parser.add_argument("-f", "--datafile"  ,    dest="datafile"   , help="name of file", required=True)
-parser.add_argument("-o", "--dataOutDir",    dest="dataOutDir" , help="directory to output digiroot files", required=True)
-parser.add_argument("-S", "--no-submit" ,    action="store_true",  dest="nosubmit", help="Do not submit batch job.")
+parser.add_argument("-d", "--inputDir" ,    dest="inputDir"    , help="directory containing files"        , required=True)
+parser.add_argument("-o", "--outputDir",    dest="outputDir" , help="directory to output digiroot files", required=True)
 arg = parser.parse_args()
 
-nSiLayers=3
-
-rootDir = arg.rootDir
-dataOutDir = arg.dataOutDir
-# Check for trailing slash on rootdir and outdir and delete
-if arg.rootDir.split("/")[-1] == "": rootDir = arg.rootDir[:-1]
-if arg.dataOutDir.split("/")[-1] == "": dataOutDir = arg.dataOutDir[:-1]
+inputDir = arg.inputDir
+outputDir = arg.outputDir
 
 # Check that the root and output directories exist
-if not os.path.exists(rootDir):
-    print "Provided root directory \"%s\" does not exist!"%(rootDir)
+if not os.path.exists(inputDir):
+    print "Provided root directory \"%s\" does not exist!"%(inputDir)
+    print "Exiting..."
     quit()
 
-if not os.path.exists(dataOutDir):
-    print "Provided output directory \"%s\" does not exist!"%(dataOutDir)
+if not os.path.exists(outputDir):
+    print "Provided output directory \"%s\" does not exist!"%(outputDir)
+    print "Exiting..."
     quit()
 
-# Check for temp directory and create one if not
+# Check for trailing slash on inputDir and outdir and delete
+if arg.inputDir.split("/")[-1] == "": inputDir = arg.inputDir[:-1]
+if arg.outputDir.split("/")[-1] == "": outputDir = arg.outputDir[:-1]
+
+# Check for temp directory and create one if none exists 
 if not os.path.exists("./temp"): os.mkdir("temp")
 
-#in %
-interCalib = 3
+# Digitization parameters 
+# Format for granularity, noise, threshold: beginLayer-endLayer:value,beginLayer2-endLayer2:value2...
+granularity = "0-55:4"
+noise       = "0-55:0.15" # In MIPs
+threshold   = "0-55:4"    # In ADC
+nSiLayers   = 3
+interCalib  = 3           # In %
 
-granularity="0-55:4"
-noise="0-55:0.15"
-threshold="0-55:4"
-
-suffix="IC%d"%(interCalib)
-    
-if arg.model!=2 : suffix="%s_Si%d"%(suffix,nSiLayers)
-    
 outDir = os.getcwd()
 
-os.system("mkdir -p %s"%(outDir))
-
-#wrapper
+# Write .sh file to be submitted to Condor
 scriptFile = open("%s/runDigiJob.sh"%(outDir), "w")
 scriptFile.write("#!/bin/bash\n")
 scriptFile.write("infile=$1\n")
@@ -66,7 +61,7 @@ scriptFile.write("./bin/digitizer -N 0 -O ${outfilepath} -F ${outfilename} -I ${
 scriptFile.write("echo \"All done\"\n")
 scriptFile.close()
 
-#submit
+# Write Condor submit file
 condorSubmit = open("%s/condorSubmit"%(outDir), "w")
 condorSubmit.write("Executable          =  %s\n"%(scriptFile.name))
 condorSubmit.write("Universe            =  vanilla\n")
@@ -74,9 +69,9 @@ condorSubmit.write("Requirements        =  Arch==\"X86_64\"  &&  (Machine  !=  \
 condorSubmit.write("+CondorGroup        =  \"cmsfarm\"\n")
 condorSubmit.write("getenv              =  True\n")
 condorSubmit.write("Request_Memory      =  4 Gb\n")
-condorSubmit.write("Log         =  %s.log\n"%(outDir))
+condorSubmit.write("Log                 =  %s.log\n"%(outDir))
 
-for file in os.listdir(rootDir):
+for file in os.listdir(inputDir):
 
     temp = file.split("_")
     for i in range(len(temp)):
@@ -87,14 +82,13 @@ for file in os.listdir(rootDir):
             version = int(temp[i][7:])
     
     # Extract output filename from input filename
-    outFilename = "Digi_"+str(file.split(".root")[0])
+    outFilename = "Digi_"+str(file)
 
-    condorSubmit.write("Arguments = %s %s %s\n"%(rootDir+"/"+file,dataOutDir,outFilename))
+    condorSubmit.write("Arguments = %s %s %s\n"%(inputDir+"/"+file,outputDir,outFilename))
     condorSubmit.write("Queue\n")
 
 condorSubmit.close()
 
 os.system("chmod u+rwx %s/runDigiJob.sh"%(outDir))
 command = "condor_submit " + condorSubmit.name + "\n"
-if arg.nosubmit : os.system("echo " + command) 
-else: subprocess.call(command.split())
+subprocess.call(command.split())
