@@ -10,15 +10,7 @@
 class HGCSSCalibration {
 
 public:
-	HGCSSCalibration() {
-
-		vtx_x_ = 0;
-		vtx_y_ = 0;
-		vtx_z_ = 0;
-	}
-	;
-
-	HGCSSCalibration(const unsigned nSi = 3);
+	HGCSSCalibration() {};
 
 	~HGCSSCalibration();
 
@@ -38,7 +30,6 @@ private:
 	double   vtx_x_;
 	double   vtx_y_;
 	double   vtx_z_;
-	unsigned nSiLayers_;
 };
 
 #endif

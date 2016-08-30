@@ -3,14 +3,6 @@
 #include <iostream>
 #include <cmath>
 
-HGCSSCalibration::HGCSSCalibration(const unsigned nSi) {
-
-	vtx_x_ = 0;
-	vtx_y_ = 0;
-	vtx_z_ = 0;
-	nSiLayers_ = nSi;
-}
-
 HGCSSCalibration::~HGCSSCalibration() {}
 
 double HGCSSCalibration::MeVToMip(const unsigned layer,

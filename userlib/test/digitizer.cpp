@@ -166,7 +166,6 @@ int main(int argc, char** argv) {
             {"noiseStr",    required_argument, 0, 'S'},
             {"threshStr",   required_argument, 0, 'T'},
             {"interCalib",  required_argument, 0, 'C'},
-            {"nSiLayers",   required_argument, 0, 'L'}
         };
 
         int pNevts = -1;
@@ -177,7 +176,6 @@ int main(int argc, char** argv) {
         std::string noiseStr = "";
         std::string threshStr = "";
         double interCalib = 0;
-        int nSiLayers = -1;
 
         while((opt = getopt_long(argc,argv,"N:I:O:F:G:S:T:C:L:", long_options, &option_index)) != -1) {
             switch(opt) {
@@ -212,11 +210,6 @@ int main(int argc, char** argv) {
                 case 'C':
                     interCalib = double(atoi(optarg));
                     break;
-
-                case 'L':
-                    nSiLayers = int(atoi(optarg));
-                    break;
-
             }
         }
 
@@ -279,10 +272,10 @@ int main(int argc, char** argv) {
 
         myDetector.buildDetector(versionNumber);
 	//initialise calibration class
-	HGCSSCalibration mycalib(nSiLayers);
+	HGCSSCalibration mycalib;
 
 	const unsigned nLayers = myDetector.nLayers();
-	HGCSSGeometryConversion geomConv(model, cellSize, nSiLayers);
+	HGCSSGeometryConversion geomConv(model, cellSize);
 	geomConv.setXYwidth(calorSizeXY);
         geomConv.initialiseHoneyComb(calorSizeXY, cellSize);
 
@@ -332,7 +325,7 @@ int main(int argc, char** argv) {
 	/////////////////////////////////////////////////////////////
 
 	std::ostringstream outputStr;
-        outputStr << outFilePath << "/" << outFilename << ".root";
+        outputStr << outFilePath << "/" << outFilename;
 
 	TFile *outputFile = TFile::Open(outputStr.str().c_str(), "RECREATE");
 
