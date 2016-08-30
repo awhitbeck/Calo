@@ -53,12 +53,12 @@ public:
 	;
 
 	inline unsigned layer() const {
-		return layer_ / 3;
+		return layer_;
 	}
 	;
 
 	inline unsigned silayer() const {
-		return layer_ % 3;
+		return layer_;
 	}
 	;
 

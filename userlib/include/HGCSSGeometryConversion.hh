@@ -15,8 +15,7 @@ class HGCSSGeometryConversion {
 public:
 	HGCSSGeometryConversion() {};
 
-	HGCSSGeometryConversion(const unsigned model, const double cellsize,
-			const unsigned nSiLayers = 3);
+	HGCSSGeometryConversion(const unsigned model, const double cellsize);
 
 	~HGCSSGeometryConversion();
 
@@ -109,7 +108,6 @@ private:
 	double   cellSize_;
 	std::vector<unsigned> granularity_;
 	unsigned model_;
-	unsigned nSiLayers_;
 	std::map<DetectorEnum, std::vector<TH2Poly*> > HistMapE_;
 	std::map<DetectorEnum, std::vector<TH2Poly*> > HistMapTime_;
 	std::map<DetectorEnum, std::vector<TH2Poly*> > HistMapN_;

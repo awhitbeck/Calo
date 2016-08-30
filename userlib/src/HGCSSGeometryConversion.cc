@@ -4,7 +4,7 @@
 #include <cmath>
 
 HGCSSGeometryConversion::HGCSSGeometryConversion(const unsigned model,
-		const double cellsize, const unsigned nSiLayers) {
+		const double cellsize) {
 
 	width_ = 200; //mm
 	model_ = model;
@@ -18,7 +18,6 @@ HGCSSGeometryConversion::HGCSSGeometryConversion(const unsigned model,
 		width_ = 1000;
 
 	cellSize_ = cellsize;
-	nSiLayers_ = nSiLayers;
 
 }
 
