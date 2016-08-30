@@ -44,7 +44,6 @@ if not os.path.exists("./temp"): os.mkdir("temp")
 granularity = "0-55:4"
 noise       = "0-55:0.15" # In MIPs
 threshold   = "0-55:4"    # In ADC
-nSiLayers   = 3
 interCalib  = 3           # In %
 
 outDir = os.getcwd()
@@ -57,7 +56,7 @@ scriptFile.write("outfilepath=$2\n")
 scriptFile.write("outfilename=$3\n")
 scriptFile.write("source /data/cmszfs1/sw/HGCAL_SIM_A/setup.sh\n")
 scriptFile.write("localdir=`pwd`\n")
-scriptFile.write("./bin/digitizer -N 0 -O ${outfilepath} -F ${outfilename} -I ${infile} $PWD -G %s -S %s -T %s -C %d -L %d\n"%(granularity,noise,threshold,interCalib,nSiLayers))
+scriptFile.write("./bin/digitizer -N 0 -O ${outfilepath} -F ${outfilename} -I ${infile} $PWD -G %s -S %s -T %s -C %d\n"%(granularity,noise,threshold,interCalib))
 scriptFile.write("echo \"All done\"\n")
 scriptFile.close()
 
