@@ -76,7 +76,7 @@ condorSubmit.write("getenv              =  True\n")
 condorSubmit.write("Request_Memory      =  4 Gb\n")
 condorSubmit.write("Log                 =  %s.log\n" % outDir)
 
-for job in xrange(10000,10000+arg.numjobs):
+for job in xrange(0,arg.numjobs):
 
     # Append jobs to Condor submit file 
     condorSubmit.write("Arguments       = %d %s\n"%(job,outTag))
