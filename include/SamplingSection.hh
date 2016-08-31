@@ -55,7 +55,7 @@ public:
 			    T tmp;
 			    using std::swap;
 			    t.swap( tmp );
-			};
+			}
 
 			inline G4Colour g4Colour(const unsigned & aEle) {
 				if (isSensitiveElement(aEle)) return G4Colour::Red();

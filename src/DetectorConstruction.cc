@@ -43,7 +43,7 @@ DetectorConstruction::DetectorConstruction(G4int ver, G4int mod) :
 	m_detectorMessenger = new DetectorMessenger(this);
 	UpdateCalorSize();
 	std::cout << "The offset is " << -0.5 * (GetCalorSizeZ())/cm << std::endl;
-        SetMagField("b18d36.dat",0.5 * GetCalorSizeZ() - 20 * cm);
+        SetMagField("b18d36.dat",0.5*GetCalorSizeZ()-20*cm);
 	//SetMagField(0);
 }
 void DetectorConstruction::buildTracker(){
@@ -525,10 +525,10 @@ void DetectorConstruction::fillInterSectorSpace(const unsigned sectorNum,
 				G4RotationMatrix* rot = new G4RotationMatrix(0,0,1);
 				unsigned iSecret = rand() % 60 ;
 				rot->rotateZ(iSecret*deg);
-				G4PVPlacement *tmp = new G4PVPlacement(G4Transform3D(*rot,
-						G4ThreeVector(xpvpos, 0.,
-								zOffset + zOverburden )), logi,
-						baseName + "phys", m_logicWorld, false, 0);
+				//G4PVPlacement *tmp = new G4PVPlacement(G4Transform3D(*rot,
+				//		G4ThreeVector(xpvpos, 0.,
+				//				zOffset + zOverburden )), logi,
+				//		baseName + "phys", m_logicWorld, false, 0);
 
 				G4VisAttributes *simpleBoxVisAtt = new G4VisAttributes(
 						G4Colour::Magenta);

@@ -88,7 +88,7 @@ void EventAction::Detect(G4double eDepRaw, G4VPhysicalVolume *volume,G4Track* lT
 }
 
 
-void EventAction::EndOfEventAction(const G4Event* g4evt) {
+void EventAction::EndOfEventAction(const G4Event* /*g4evt*/) {
 	event_.eventNumber(evtNb_);
 	G4String fileN = "currentEvent.rndm";
 	std::ifstream input(fileN);
