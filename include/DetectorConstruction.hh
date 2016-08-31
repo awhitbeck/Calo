@@ -33,11 +33,11 @@ public:
 		T			 = 4,
 		HE			 = 5,
 		H			 = 6,
-		E			 = 7,
+		E			 = 7
 	};
 
 	enum DetectorModel {
-		m_SIMPLE_20 = 0, m_SIMPLE_50 = 1, m_FULLSECTION = 2, m_SIMPLE_100 = 3,
+		m_SIMPLE_20 = 0, m_SIMPLE_50 = 1, m_FULLSECTION = 2, m_SIMPLE_100 = 3
 	};
 
 
@@ -113,7 +113,7 @@ public:
 	unsigned initLayer() {
 		return initLayer_;
 	}
-	unsigned initLayer(int aVal) {
+	inline void initLayer(int aVal) {
 		 initLayer_ = aVal;
 	}
 	/**
