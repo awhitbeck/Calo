@@ -94,10 +94,11 @@ void DetectorConstruction::buildECal(){
 	std::vector<std::pair <G4double,std::string>> iEleL,iEleR;
 	if (version_ != H and version_ != T and version_ != TH){
 
-		double wThickL = 2.6,wThickR = 3.25;
+		double wThickL = 0,wThickR = 2.45,cuThick = 2.04;//5;
 
 		iEleL.clear();iEleR.clear();
-		iEleL.push_back(make_pair(5*mm,"Cu"));
+		iEleL.push_back(make_pair(0.5*mm,"Si"));
+		iEleL.push_back(make_pair(cuThick*mm,"Cu"));
 		iEleL.push_back(make_pair(wThickL,"W"));
 		iEleL.push_back(make_pair(0.5*mm,"CFMix"));
 		iEleL.push_back(make_pair(0.5*mm,"Si"));
@@ -108,7 +109,7 @@ void DetectorConstruction::buildECal(){
 		iEleL.push_back(make_pair(2*mm,"PCB"));
 
 		iEleR.push_back(make_pair(wThickR,"W"));
-		iEleL.push_back(make_pair(0.5*mm,"CFMix"));
+		iEleR.push_back(make_pair(0.5*mm,"CFMix"));
 		iEleR.push_back(make_pair(0.5*mm,"Si"));
 		iEleR.push_back(make_pair(0.5*mm,"CFMix"));
 		iEleR.push_back(make_pair(2*mm,"PCB"));
@@ -116,15 +117,25 @@ void DetectorConstruction::buildECal(){
 		iEleR.push_back(make_pair(.5*mm,"Cu"));
 		iEleR.push_back(make_pair(2*mm,"PCB"));
 
-		unsigned Nmodule=5;
+		unsigned Nmodule=8;
 		for(unsigned i=0; i<Nmodule; i++) {
+			switch(i){
+				case 0: break;
+				case 1: iEleL[0].first = 0.0*mm;iEleL[1].first = 4.08*mm; break;
+				case 2: iEleL[1].first = 0.0*mm;iEleL[2].first = 1.5*mm; break;
+				case 3: iEleL[1].first = 5.0*mm;iEleL[2].first = 0.776 * mm; break;
+				case 4: iEleL[1].first = 0.0*mm;iEleL[2].first = 2.5*mm; break;
+				case 5: iEleL[1].first = 5.0*mm;iEleL[2].first = 1.55*mm; break;
+				case 6: iEleL[1].first = 0.0*mm;iEleL[2].first = 2.8*mm; break;
+				case 7: iEleL[1].first = 5.0*mm;iEleL[2].first = 1.55*mm; break;
+
+			}
 			m_caloStruct.push_back( SamplingSection(iEleL) );
-			m_caloStruct.push_back( SamplingSection(iEleR) );
 
 		}
-		iEleL[2].first = 3.2*mm;
-		iEleR[2].first = 3.2*mm;
-		wThickL = 2.67;wThickR = 3.32;
+
+		iEleL[2].first = 2.27*mm;
+		iEleR[2].first = 3.5*mm;
 
 		Nmodule=16;
 		for(unsigned i=0; i<Nmodule; i++) {
