@@ -3,8 +3,7 @@
 #include <iostream>
 #include <cmath>
 
-HGCSSGeometryConversion::HGCSSGeometryConversion(const unsigned model,
-		const double cellsize) {
+HGCSSGeometryConversion::HGCSSGeometryConversion(const unsigned model, const double cellsize) {
 
 	width_ = 200; //mm
 	model_ = model;
@@ -206,16 +205,16 @@ void HGCSSGeometryConversion::setGranularity(const std::vector<unsigned> &granul
 	}
 }
 
-double HGCSSGeometryConversion::cellSize(const unsigned aLayer,	const double aR) const {
+double HGCSSGeometryConversion::cellSize(const unsigned aLayer) const {
 
 	if (theDetector().subDetectorByLayer(aLayer).isScint)
 		return 10. * granularity_[aLayer];
 	return cellSize_;
 }
 
-double HGCSSGeometryConversion::cellSizeInCm(const unsigned aLayer, const double aR) const {
+double HGCSSGeometryConversion::cellSizeInCm(const unsigned aLayer) const {
 
-	return cellSize(aLayer, aR) / 10.;
+	return cellSize(aLayer) / 10.;
 }
 
 void HGCSSGeometryConversion::initialiseHistos(const bool recreate,
@@ -242,7 +241,7 @@ void HGCSSGeometryConversion::initialiseHistos(const bool recreate,
 	}
 }
 
-void HGCSSGeometryConversion::fill(std::vector<std::vector<int> > &filledBins, const DetectorEnum type, const unsigned newlayer, const double &weightedE, const double &aTime, const double &posx, const double &posy, const double &posz) {
+void HGCSSGeometryConversion::fill(std::vector<std::vector<int> > &filledBins, const DetectorEnum type, const unsigned newlayer, const double &weightedE, const double &posx, const double &posy) {
 
         int currentBin = HistMapN_[type][newlayer]->FindBin(posx, posy);
         if (!(std::find(filledBins.at(newlayer).begin(), filledBins.at(newlayer).end(), currentBin) != filledBins.at(newlayer).end())) {

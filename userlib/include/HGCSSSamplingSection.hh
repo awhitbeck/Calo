@@ -284,29 +284,25 @@ private:
 	double neutronFrac_;
 	double hadFrac_;
 
-
+        double muKin_;
 	double neutronKin_;
-	double muKin_;
 	double hadKin_;
 	double eleKin_;
 	double gamKin_;
 
+        double avgTime_;
+	unsigned nSiHits_;
 
-	unsigned muCount_;
-	unsigned hadCount_;
-	unsigned neutronCount_;
-	unsigned gamCount_;
-	unsigned eleCount_;
-
-
-	double eleShowerSize_;
+        double eleShowerSize_;
 	double hadShowerSize_;
 	double neutShowerSize_;
 	double muShowerSize_;
 
-
-	double avgTime_;
-	unsigned nSiHits_;
+        unsigned neutronCount_;
+	unsigned hadCount_;
+        unsigned muCount_;
+	unsigned eleCount_;
+        unsigned gamCount_;
 
 ClassDef(HGCSSSamplingSection,1)
 	;

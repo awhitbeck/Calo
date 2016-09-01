@@ -228,14 +228,14 @@ private:
 	int pdgid_;
 	int layer_;
 	double charge_;
-	int parentPdgId_;
 	int trackID_;
 	double vertexKE_;
 	double parentKE_;
         double finalKE_;
+        int parentPdgId_;
 	TVector3 vertexPos_;
 	TVector3 vertexMom_;
-ClassDef(HGCSSGenParticle,1)
+ClassDef(HGCSSGenParticle,2)
 	;
 
 };

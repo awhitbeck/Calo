@@ -57,10 +57,10 @@ public:
 	}
 	;
 
-	inline unsigned silayer() const {
-		return layer_;
-	}
-	;
+	//inline unsigned silayer() const {
+	//	return layer_;
+	//}
+	//;
 
 	//re-encode local layer into det layer + si layer if several sensitive layers (up to 3...)
 	inline void setLayer(const unsigned & layer, const unsigned & silayer) {
@@ -183,10 +183,8 @@ public:
 public:
 
 	double energy_;
-	double parentEng_;
 	double time_;
 	double zpos_;
-	double pdgIDMainParent_;
 	unsigned layer_;
 	unsigned cellid_;
 	unsigned nGammas_;
@@ -197,10 +195,12 @@ public:
 	unsigned nHadrons_;
 	int trackIDMainParent_;
 	double eDepMainParent_;
+        double pdgIDMainParent_;
 	double KEMainParent_;
+        double parentEng_;
 
-ClassDef(HGCSSSimHit,1)
-	;
+
+ClassDef(HGCSSSimHit,2);
 
 };
 

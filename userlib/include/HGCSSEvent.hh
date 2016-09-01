@@ -104,7 +104,7 @@ private:
         double wgtDep_;
 	TVector3 seeds_,status_;
 
-ClassDef(HGCSSEvent,1);
+ClassDef(HGCSSEvent,2);
 
 };
 

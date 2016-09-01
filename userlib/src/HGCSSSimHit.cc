@@ -102,7 +102,7 @@ double HGCSSSimHit::phi(const bool isScintillator,
 
 void HGCSSSimHit::Print(std::ostream & aOs) const {
 	aOs << "====================================" << std::endl << " = Layer "
-			<< layer() << " siLayer " << silayer() << " cellid " << cellid_
+			<< layer() << " cellid " << cellid_
 			<< std::endl << " = Energy " << energy_ << " time " << time_
 			<< std::endl << " = g " << nGammas_ << " e " << nElectrons_
 			<< " mu " << nMuons_ << " neutron " << nNeutrons_ << " proton "
