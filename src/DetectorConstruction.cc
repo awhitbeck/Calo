@@ -135,7 +135,7 @@ void DetectorConstruction::buildECal(){
 		}
 
 		iEleL[2].first = 2.27*mm;
-		iEleR[1].first = 3.5*mm;
+		iEleR[0].first = 3.5*mm;
 
 		Nmodule=16;
 		for(unsigned i=0; i<Nmodule; i++) {
