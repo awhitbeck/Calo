@@ -67,7 +67,7 @@ void extractParameterFromStr(std::string aStr, T &vec) {
 		unsigned beginIdx = atoi(lLay[0].c_str());
 		unsigned endIdx   = lLay.size() == 1 ? beginIdx : atoi(lLay[1].c_str());
 
-		for (unsigned iL(beginIdx); iL < endIdx + 1; ++iL) {
+		for (unsigned iL(beginIdx); iL < endIdx; ++iL) {
 
 			if (iL < vec.size())
 				std::istringstream(lPair[1]) >> vec[iL];
@@ -82,7 +82,7 @@ void extractParameterFromStr(std::string aStr, T &vec) {
 	} //loop on elements
 }
 
-std::pair<double,int> processHist(unsigned int layer, TH2Poly* histE, TH2Poly* histN, std::vector<TH2Poly*> histNTot, HGCSSDigitisation &myDigitiser, const HGCSSSubDetector &subdet, const std::vector<unsigned> &pThreshInADC) {
+std::pair<double,int> processHist(unsigned int layer, TH2Poly* histE, HGCSSDigitisation &myDigitiser, const HGCSSSubDetector &subdet, const std::vector<unsigned> &pThreshInADC) {
         DetectorEnum adet = subdet.type;
         bool isSi         = subdet.isSi;
         bool isScint      = subdet.isScint;
@@ -378,7 +378,7 @@ int main(int argc, char** argv) {
 
         char *histname1 = new char[20];
         char *histname2 = new char[20];
-        for (unsigned iL(0); iL < nLayers; ++iL) {
+        for (unsigned iL(0); iL <= nLayers; ++iL) {
                 sprintf(histname1, "nHits_Layer_%d", iL);
                 nHitsHist.push_back(new TH1F(histname1, histname1, 1000, -0.5, 999.5));
                 sprintf(histname2, "MIPs_Layer_%d", iL);
@@ -410,9 +410,7 @@ int main(int argc, char** argv) {
 
                         // Create SimHit object for iHth sim hit and acquire the simhits layer
 			HGCSSSimHit lHit = (*hitvec)[iH];
-                        unsigned layer = lHit.layer();
-                        const HGCSSSubDetector &subdet = myDetector.subDetectorByLayer(layer);
-
+                        unsigned layer = lHit.layer()-1;
 			if (layer != prevLayer) {
 
 				const HGCSSSubDetector &subdet = myDetector.subDetectorByLayer(layer);
@@ -421,20 +419,16 @@ int main(int argc, char** argv) {
                                 subdetLayer = layer - subdet.layerIdMin;
 				prevLayer = layer;
 			}
-                        
 			std::pair<double, double> xy = lHit.get_xy(isScint, geomConv);
 			double posx     = xy.first;  
 			double posy     = xy.second;
 			double radius   = sqrt(pow(posx, 2) + pow(posy, 2));
-			double posz     = lHit.get_z();
-                        double realtime = 0;
                         double energy   = lHit.energy() * mycalib.MeVToMip(layer, radius);
-
-			if (energy > 0 && lHit.silayer() < 3) {
-                                
-		                geomConv.fill(bins, type, subdetLayer, energy, realtime, posx, posy, posz);
+			if (energy > 0) {
+		                geomConv.fill(bins, type, subdetLayer, energy, posx, posy);
                         }
 		}
+
                 std::vector<double> layerSums(100,0.0);
                 for (unsigned iL(0); iL < nLayers; ++iL) {
 
@@ -447,7 +441,7 @@ int main(int argc, char** argv) {
                                 histNTot[iL] = histNClone;
                         }
 
-                        std::pair<double,int> totals = processHist(iL, histE, histN, histNTot, myDigitiser, subdet, pThreshInADC);
+                        std::pair<double,int> totals = processHist(iL, histE, myDigitiser, subdet, pThreshInADC);
                         // totals.first is energy layer sum in MIPs
                         // totals.second is num particles sum
              
@@ -496,7 +490,7 @@ int main(int argc, char** argv) {
 
         outputFile->cd();
         // Loop on every layer and acquire the filled TH2Poly histo summed over all events.
-        //for (unsigned iL(0); iL < nLayers; ++iL) {
+        //for (unsigned iL(1); iL < nLayers; ++iL) {
 
         //        TH2Poly* histE = geomConv.get2DHist(iL, "E");
         //        histNTot[iL]->Write();

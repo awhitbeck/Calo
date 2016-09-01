@@ -92,7 +92,7 @@ void HGCSSDetector::finishInitialisation() {
 				section_[iL] = secIndex[i];
 		}
 	}
-	printDetector(std::cout);
+	printDetector();
 }
 
 const HGCSSSubDetector & HGCSSDetector::subDetectorByEnum(DetectorEnum adet) {
@@ -114,7 +114,7 @@ void HGCSSDetector::reset() {
 	section_.clear();
 }
 
-void HGCSSDetector::printDetector(std::ostream &aOs) const {
+void HGCSSDetector::printDetector() const {
 
 	std::cout << " -------------------------- " << std::endl
 			<< " -- Detector information -- " << std::endl

@@ -10,7 +10,13 @@
 class HGCSSCalibration {
 
 public:
-	HGCSSCalibration() {};
+        HGCSSCalibration() {
+
+                vtx_x_ = 0;
+                vtx_y_ = 0;
+                vtx_z_ = 0;
+        }
+        ;
 
 	~HGCSSCalibration();
 

@@ -64,14 +64,14 @@ public:
 	}
 	;
 
-	double cellSize(const unsigned aLayer, const double aR) const;
+	double cellSize(const unsigned aLayer) const;
 
-	double cellSizeInCm(const unsigned aLayer, const double aR) const;
+	double cellSizeInCm(const unsigned aLayer) const;
 
 	void initialiseHistos(const bool recreate = false, std::string uniqStr = "",
 			const bool print = true);
 
-	void fill(std::vector<std::vector<int> > &filledBins, const DetectorEnum type, const unsigned newlayer, const double &weightedE, const double &aTime, const double &posx, const double &posy, const double &posz);
+	void fill(std::vector<std::vector<int> > &filledBins, const DetectorEnum type, const unsigned newlayer, const double &weightedE, const double &posx, const double &posy);
 
 	double sumBins(const std::vector<TH2Poly*> &aHistVec, const double &aMipThresh = 0.);
 
