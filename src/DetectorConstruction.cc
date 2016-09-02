@@ -99,18 +99,19 @@ void DetectorConstruction::buildECal(){
 		iEleL.clear();iEleR.clear();
 		iEleL.push_back(make_pair(0.5*mm,"Si"));
 		iEleL.push_back(make_pair(cuThick*mm,"Cu"));
-		iEleL.push_back(make_pair(wThickL,"W"));
+		iEleL.push_back(make_pair(0.0*mm,"W"));
+//                iEleL.push_back(make_pair(5*mm,"Cu"));
 		iEleL.push_back(make_pair(0.5*mm,"CFMix"));
-		iEleL.push_back(make_pair(0.5*mm,"Si"));
+		iEleL.push_back(make_pair(0.3*mm,"Si"));
 		iEleL.push_back(make_pair(0.5*mm,"CFMix"));
 		iEleL.push_back(make_pair(2*mm,"PCB"));
 		iEleL.push_back(make_pair(2*mm,"Air"));
 		iEleL.push_back(make_pair(.5*mm,"Cu"));
 		iEleL.push_back(make_pair(2*mm,"PCB"));
 
-		iEleR.push_back(make_pair(wThickR,"W"));
+		iEleR.push_back(make_pair(2.8*mm,"W"));
 		iEleR.push_back(make_pair(0.5*mm,"CFMix"));
-		iEleR.push_back(make_pair(0.5*mm,"Si"));
+		iEleR.push_back(make_pair(0.3*mm,"Si"));
 		iEleR.push_back(make_pair(0.5*mm,"CFMix"));
 		iEleR.push_back(make_pair(2*mm,"PCB"));
 		iEleR.push_back(make_pair(2*mm,"Air"));
@@ -133,8 +134,9 @@ void DetectorConstruction::buildECal(){
 			m_caloStruct.push_back( SamplingSection(iEleL) );
 
 		}
-
-		iEleL[2].first = 2.27*mm;
+                iEleL[0].first = 0.0*mm;
+		iEleL[2].first = 1.55*mm;
+                iEleL[1].first =  5*mm;
 		iEleR[0].first = 3.5*mm;
 
 		Nmodule=16;
