@@ -206,12 +206,13 @@ void DetectorConstruction::DefineMaterials() {
 	m_materials["glass"] = nistManager->FindOrBuildMaterial("G4_GLASS_PLATE", false);
 
 
-	m_materials["PCB"] = new G4Material("FR4", 1.700 * g / cm3, 5);
-	//m_materials["PCB"]->AddMaterial(m_materials["Si"], 0.18077359);
-	//m_materials["PCB"]->AddMaterial(m_materials["O"], 0.4056325);
-	//m_materials["PCB"]->AddMaterial(m_materials["C"], 0.27804208);
-	m_materials["PCB"]->AddMaterial(m_materials["Cu"], 0.5);
-	m_materials["PCB"]->AddMaterial(m_materials["glass"], 0.5);
+        m_materials["PCB"] = new G4Material("FR4", 5.68 * g / cm3, 2);
+        //m_materials["PCB"] = new G4Material("FR4", 1.700 * g / cm3, 5);
+        //m_materials["PCB"]->AddMaterial(m_materials["Si"], 0.18077359);
+        //m_materials["PCB"]->AddMaterial(m_materials["O"], 0.4056325);
+        //m_materials["PCB"]->AddMaterial(m_materials["C"], 0.27804208);
+        m_materials["PCB"]->AddMaterial(m_materials["Cu"], 0.5);
+        m_materials["PCB"]->AddMaterial(m_materials["glass"], 0.5);
 	m_dEdx["PCB"] = 0;
 
 	m_materials["Brass"] = new G4Material("Brass", 8.53 * g / cm3, 2);
