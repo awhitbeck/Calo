@@ -91,58 +91,49 @@ void DetectorConstruction::buildTracker(){
 
 void DetectorConstruction::buildECal(){
 
-	std::vector<std::pair <G4double,std::string>> iEleL,iEleR;
+	std::vector<std::pair <G4double,std::string>> initBlock,iEle;
 	if (version_ != H and version_ != T and version_ != TH){
 
-		double wThickL = 0,wThickR = 2.45,cuThick = 2.04;//5;
 
-		iEleL.clear();iEleR.clear();
-		iEleL.push_back(make_pair(0.5*mm,"Si"));
-		iEleL.push_back(make_pair(cuThick*mm,"Cu"));
-		iEleL.push_back(make_pair(0.0*mm,"W"));
-//                iEleL.push_back(make_pair(5*mm,"Cu"));
-		iEleL.push_back(make_pair(0.5*mm,"CFMix"));
-		iEleL.push_back(make_pair(0.5*mm,"Si"));
-		iEleL.push_back(make_pair(0.5*mm,"CFMix"));
-		iEleL.push_back(make_pair(2*mm,"PCB"));
-		iEleL.push_back(make_pair(2*mm,"Air"));
-		iEleL.push_back(make_pair(.5*mm,"Cu"));
-		iEleL.push_back(make_pair(2*mm,"PCB"));
+		iEle.clear();
 
-		iEleR.push_back(make_pair(2.8*mm,"W"));
-		iEleR.push_back(make_pair(0.5*mm,"CFMix"));
-		iEleR.push_back(make_pair(0.5*mm,"Si"));
-		iEleR.push_back(make_pair(0.5*mm,"CFMix"));
-		iEleR.push_back(make_pair(2*mm,"PCB"));
-		iEleR.push_back(make_pair(2*mm,"Air"));
-		iEleR.push_back(make_pair(.5*mm,"Cu"));
-		iEleR.push_back(make_pair(2*mm,"PCB"));
+		initBlock.push_back(2*mm, "Al");
 
-		unsigned Nmodule=8;
+		iEle.push_back(make_pair(2*mm,"Air"));
+		iEle.push_back(make_pair(1*mm,"PCB"));
+		iEle.push_back(make_pair(0.05*mm,"CFMix"));
+		iEle.push_back(make_pair(0.5*mm,"Si"));
+		iEle.push_back(make_pair(0.2*mm,"CFMix"));
+		iEle.push_back(make_pair(0.0*mm,"W"));
+
+		iEle.push_back(make_pair(0.5*mm,"C"));
+		iEle.push_back(make_pair(2*mm,"Air"));
+		iEle.push_back(make_pair(0.5*mm,"C"));
+
+
+		unsigned Nmodule=10;
 		for(unsigned i=0; i<Nmodule; i++) {
 			switch(i){
-				case 0: break;
-				case 1: iEleL[0].first = 0.0*mm;iEleL[1].first = 4.08*mm; break;
-				case 2: iEleL[1].first = 0.0*mm;iEleL[2].first = 1.5*mm; break;
-				case 3: iEleL[1].first = 5.0*mm;iEleL[2].first = 0.776 * mm; break;
-				case 4: iEleL[1].first = 0.0*mm;iEleL[2].first = 2.5*mm; break;
-				case 5: iEleL[1].first = 5.0*mm;iEleL[2].first = 1.55*mm; break;
-				case 6: iEleL[1].first = 0.0*mm;iEleL[2].first = 2.8*mm; break;
-				case 7: iEleL[1].first = 5.0*mm;iEleL[2].first = 1.55*mm; break;
-
+				case 0: m_caloStruct.push_back( SamplingSection(initBlock) ); iEle[5].first = .4 *mm;break;
+				case 1: iEle[5].first = .8 *mm; break;
+				case 2: iEle[5].first = 1.2 *mm; break;
+				case 3: iEle[5].first = 1.6 *mm; break;
+				case 4: iEle[5].first = 2. *mm; break;
+				case 5: iEle[5].first = 2.4*mm; break;
+				case 6: iEle[5].first = 2.8*mm; break;
+				case 7: iEle[5].first = 2.8*mm; break;
+				case 8: iEle[5].first = 2.8*mm; break;
+				case 9: iEle[5].first = 2.8*mm; break;
 			}
-			m_caloStruct.push_back( SamplingSection(iEleL) );
+			m_caloStruct.push_back( SamplingSection(iEle) );
 
 		}
-                iEleL[0].first = 0.0*mm;
-		iEleL[2].first = 1.55*mm;
-                iEleL[1].first =  5*mm;
-		iEleR[0].first = 3.5*mm;
 
-		Nmodule=16;
+
+		iEle[5].first = 3.5*mm; break;
+		Nmodule=32;
 		for(unsigned i=0; i<Nmodule; i++) {
-			m_caloStruct.push_back( SamplingSection(iEleL) );
-			m_caloStruct.push_back( SamplingSection(iEleR) );
+			m_caloStruct.push_back( SamplingSection(iEle) );
 		}
 	}
 
@@ -212,13 +203,15 @@ void DetectorConstruction::DefineMaterials() {
 	m_dEdx["Ni"] = 1.307;
 	m_materials["O"] = nistManager->FindOrBuildMaterial("G4_O", false);
 	m_materials["Br"] = nistManager->FindOrBuildMaterial("G4_Br", false);
+	m_materials["glass"] = nistManager->FindOrBuildMaterial("G4_GLASS_PLATE", false);
+
 
 	m_materials["PCB"] = new G4Material("FR4", 1.700 * g / cm3, 5);
-	m_materials["PCB"]->AddMaterial(m_materials["Si"], 0.18077359);
-	m_materials["PCB"]->AddMaterial(m_materials["O"], 0.4056325);
-	m_materials["PCB"]->AddMaterial(m_materials["C"], 0.27804208);
-	m_materials["PCB"]->AddMaterial(m_materials["H"], 0.068442752);
-	m_materials["PCB"]->AddMaterial(m_materials["Br"], 0.067109079);
+	//m_materials["PCB"]->AddMaterial(m_materials["Si"], 0.18077359);
+	//m_materials["PCB"]->AddMaterial(m_materials["O"], 0.4056325);
+	//m_materials["PCB"]->AddMaterial(m_materials["C"], 0.27804208);
+	m_materials["PCB"]->AddMaterial(m_materials["Cu"], 0.5);
+	m_materials["PCB"]->AddMaterial(m_materials["glass"], 0.5);
 	m_dEdx["PCB"] = 0;
 
 	m_materials["Brass"] = new G4Material("Brass", 8.53 * g / cm3, 2);
