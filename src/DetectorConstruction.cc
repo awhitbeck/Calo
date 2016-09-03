@@ -130,7 +130,7 @@ void DetectorConstruction::buildECal(){
 		}
 
 
-		iEle[5].first = 3.5*mm; break;
+		iEle[5].first = 3.5*mm; 
 		Nmodule=32;
 		for(unsigned i=0; i<Nmodule; i++) {
 			m_caloStruct.push_back( SamplingSection(iEle) );
