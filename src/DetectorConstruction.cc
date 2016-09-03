@@ -97,7 +97,7 @@ void DetectorConstruction::buildECal(){
 
 		iEle.clear();
 
-		initBlock.push_back(2*mm, "Al");
+		initBlock.push_back(make_pair(2*mm, "Al"));
 
 		iEle.push_back(make_pair(2*mm,"Air"));
 		iEle.push_back(make_pair(1*mm,"PCB"));
