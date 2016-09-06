@@ -480,7 +480,7 @@ void DetectorConstruction::buildSectorStack(const unsigned sectorNum,
                                         iSecret =0.;// i * 10;//(rand() % 6);
 
                                 rot->rotateZ(iSecret*deg);
-                                if ((i == 0) || (i >= 43)){
+                                if ((i == 0) || (nEle < 6)){
                                 m_caloStruct[i].sublayer_vol[nEle * sectorNum + ie] =
                                                 new G4PVPlacement(0,
                                                                 G4ThreeVector(xpvpos, 0.,
