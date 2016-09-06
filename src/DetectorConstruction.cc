@@ -476,12 +476,27 @@ void DetectorConstruction::buildSectorStack(const unsigned sectorNum,
 
 				rot->rotateZ(iSecret*deg);
 
-				m_caloStruct[i].sublayer_vol[nEle * sectorNum + ie] =
-						new G4PVPlacement(G4Transform3D(*rot,
-								G4ThreeVector(xpvpos, 0.,
-										zOffset + zOverburden )),
-								logi, baseName + "phys", m_logicWorld, false,
-								0);
+                                if (i > 0)
+                                        iSecret =0.;// i * 10;//(rand() % 6);
+
+                                rot->rotateZ(iSecret*deg);
+                                if ((i == 0) || (i >= 43)){
+                                m_caloStruct[i].sublayer_vol[nEle * sectorNum + ie] =
+                                                new G4PVPlacement(0,
+                                                                G4ThreeVector(xpvpos, 0.,
+                                                                                zOffset + zOverburden + thick / 2),
+                                                                logi, baseName + "phys", m_logicWorld, false,
+                                                                0);
+                                }
+                                else{
+                                m_caloStruct[i].sublayer_vol[nEle * sectorNum + ie] =
+                                                new G4PVPlacement(G4Transform3D(*rot,
+                                                                G4ThreeVector(xpvpos, 0.,
+                                                                                zOffset + zOverburden )),
+                                                                logi, baseName + "phys", m_logicWorld, false,
+                                                                0);
+                                }
+
 
 				G4VisAttributes *simpleBoxVisAtt = new G4VisAttributes(
 						m_caloStruct[i].g4Colour(ie));
