@@ -126,8 +126,6 @@ void DetectorConstruction::buildECal(){
 		iEle.push_back(make_pair(0.5*mm,"Si"));
 		iEle.push_back(make_pair(0.05*mm,"CFMix"));
 		iEle.push_back(make_pair(1.5*mm,"PCB"));
-
-
 		iEle.push_back(make_pair(1*mm,"Air"));
 
 		unsigned Nmodule=3;
@@ -498,7 +496,7 @@ void DetectorConstruction::buildSectorStack(const unsigned sectorNum,
                                         iSecret =0.;// i * 10;//(rand() % 6);
 
                                 rot->rotateZ(iSecret*deg);
-                                if ((i == initLayer - 1) || (nEle < 6)){
+                                if ( (i == initLayer_ - 1) || (nEle < 6) ){
                                 m_caloStruct[i].sublayer_vol[nEle * sectorNum + ie] =
                                                 new G4PVPlacement(0,
                                                                 G4ThreeVector(xpvpos, 0.,
