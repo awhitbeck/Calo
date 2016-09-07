@@ -94,10 +94,6 @@ void DetectorConstruction::buildECal(){
 	std::vector<std::pair <G4double,std::string>> initBlock,iEleL,iEleR;
 	if (version_ != H and version_ != T and version_ != TH){
 
-
-		iEle.clear();
-		initBlock.clear();
-
 		initBlock.push_back(make_pair(2*mm, "Al"));
 		initBlock.push_back(make_pair(1.5*mm,"PCB"));
 		initBlock.push_back(make_pair(0.05*mm,"CFMix"));
