@@ -96,42 +96,60 @@ void DetectorConstruction::buildECal(){
 
 
 		iEle.clear();
+		initBlock.clear();
 
 		initBlock.push_back(make_pair(2*mm, "Al"));
+		initBlock.push_back(make_pair(1.5*mm,"PCB"));
+		initBlock.push_back(make_pair(0.05*mm,"CFMix"));
+		initBlock.push_back(make_pair(0.5*mm,"Si"));
+		initBlock.push_back(make_pair(0.2*mm,"CFMix"));
 
-		iEle.push_back(make_pair(2*mm,"Air"));
-		iEle.push_back(make_pair(1*mm,"PCB"));
+
+		///Single element in block
+		iEle.push_back(make_pair(0.0*mm,"W"));
+
+		iEle.push_back(make_pair(1*mm,"Air"));
+		iEle.push_back(make_pair(1.5*mm,"PCB"));
 		iEle.push_back(make_pair(0.05*mm,"CFMix"));
 		iEle.push_back(make_pair(0.5*mm,"Si"));
 		iEle.push_back(make_pair(0.2*mm,"CFMix"));
+
 		iEle.push_back(make_pair(0.0*mm,"W"));
 
-		iEle.push_back(make_pair(0.5*mm,"C"));
-		iEle.push_back(make_pair(2*mm,"Air"));
-		iEle.push_back(make_pair(0.5*mm,"C"));
+		iEle.push_back(make_pair(0.35*mm,"C"));
+		iEle.push_back(make_pair(1.3*mm,"Air"));
+		iEle.push_back(make_pair(0.35*mm,"C"));
+
+		iEle.push_back(make_pair(0.0*mm,"W"));
+
+		iEle.push_back(make_pair(0.2*mm,"CFMix"));
+		iEle.push_back(make_pair(0.5*mm,"Si"));
+		iEle.push_back(make_pair(0.05*mm,"CFMix"));
+		iEle.push_back(make_pair(1.5*mm,"PCB"));
 
 
-		unsigned Nmodule=10;
+		iEle.push_back(make_pair(1*mm,"Air"));
+
+		unsigned Nmodule=3;
 		for(unsigned i=0; i<Nmodule; i++) {
 			switch(i){
-				case 0: m_caloStruct.push_back( SamplingSection(initBlock) ); iEle[5].first = .4 *mm;break;
-				case 1: iEle[5].first = .8 *mm; break;
-				case 2: iEle[5].first = 1.2 *mm; break;
-				case 3: iEle[5].first = 1.6 *mm; break;
-				case 4: iEle[5].first = 2. *mm; break;
-				case 5: iEle[5].first = 2.4*mm; break;
-				case 6: iEle[5].first = 2.8*mm; break;
-				case 7: iEle[5].first = 2.8*mm; break;
-				case 8: iEle[5].first = 2.8*mm; break;
-				case 9: iEle[5].first = 2.8*mm; break;
+				case 0: m_caloStruct.push_back( SamplingSection(initBlock) ); break;
+				case 1: iEle[0].first = 0.75 *mm;iEle[6].first = 0.75 *mm;iEle[10].first = 0.75 *mm; break;
+				case 2: iEle[0].first = 2.25 *mm;iEle[6].first = 1.5 *mm;iEle[10].first = 1.5 *mm; break;
 			}
-			m_caloStruct.push_back( SamplingSection(iEle) );
-
+			if (i > 0)
+				m_caloStruct.push_back( SamplingSection(iEle) );
 		}
 
 
-		iEle[5].first = 3.5*mm; 
-		Nmodule=32;
+		iEle[0].first = 3.5 *mm;iEle[6].first = 1.75 *mm;iEle[10].first = 1.75 *mm;
+		Nmodule=9;
+		for(unsigned i=0; i<Nmodule; i++) {
+			m_caloStruct.push_back( SamplingSection(iEle) );
+		}
+
+		iEle[0].first = 7 *mm;iEle[6].first = 3.5 *mm;iEle[10].first = 3.5 *mm;
+		Nmodule=5;
 		for(unsigned i=0; i<Nmodule; i++) {
 			m_caloStruct.push_back( SamplingSection(iEle) );
 		}
