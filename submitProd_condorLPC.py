@@ -25,6 +25,7 @@ parser.add_option('-N', '--njobs'       ,    dest='njobs'              , help='n
 parser.add_option('-n', '--nevtsperjob' ,    dest='nevtsperjob'        , help='number of events'         , default=10, type=int)
 parser.add_option('-o', '--out'         ,    dest='out'                , help='output directory'             , default='/store/user/ntran/LDMX/Run_Jun4' )
 parser.add_option('-S', '--no-submit'   ,    action="store_true"       ,  dest='nosubmit'           , help='Do not submit batch job.')
+parser.add_option('-V', '--with-visualization'   ,    action="store_true"       ,  dest='visualization'           , help='Do not submit batch job.')
 parser.add_option('--subdir'            ,    dest='subdir'             , help='directory from which you submit' , default='tmp_condor')
 parser.add_option('--partype'           ,    dest='partype'            , help='particle type (pdgid)'             , default='11' , type=int)
 parser.add_option('--energy'            ,    dest='parenergy'          , help='particle energy'             , default=4, type=float )
@@ -45,20 +46,20 @@ def main():
 	parenergy = opt.parenergy;
 	zpos = opt.zpos;
 	parNameDict = {11:"electrons",
-		       13:"muons",
-		       111:"pi0s",
-		       211:"pis",
-		       2112:"neutrons",
-		       -2112:"antineutrons",
-		       130:"KLs",
-		       22:"photons"
-		       }
+			   13:"muons",
+			   111:"pi0s",
+			   211:"pis",
+			   2112:"neutrons",
+			   -2112:"antineutrons",
+			   130:"KLs",
+			   22:"photons"
+			   }
 
 	lhefile = "%d_%gGeV_phi0_theta0_x0_y0_z%s_%s.lhe"%(nevtsperjob,parenergy,zpos,parNameDict[partype])
 	#lhefile = "{0}_{1}GeV_phi0_theta0_x0_y0_z{2}_{3}.lhe".format(nevtsperjob,parenergy,zpos,parNameDict[partype])
-	os.system("cp ~/geant4_workdir/bin/Linux-g++/PFCalEE ~/geant4_workdir/tmp/Linux-g++/PFCalEE/libPFCalEE.so g4env4lpc.sh userlib/lib/libPFCalEEuserlib.so generators/singleParticleGen.py %s/." % (subdir))
+	os.system("cp ~/geant4_workdir/bin/Linux-g++/PFCalEE ~/geant4_workdir/tmp/Linux-g++/PFCalEE/libPFCalEE.so g4env4lpc.sh userlib/lib/libPFCalEEuserlib.so generators/singleParticleGen.py b18d36.dat %s/." % (subdir))
 	os.chdir(subdir);
-	os.system("tar -cvzf inputs.tar.gz PFCalEE g4env4lpc.sh libPFCalEE.so libPFCalEEuserlib.so singleParticleGen.py" );
+	os.system("tar -cvzf inputs.tar.gz PFCalEE g4env4lpc.sh libPFCalEE.so libPFCalEEuserlib.so singleParticleGen.py b18d36.dat" );
 
 	for i in range(njobs):
 
@@ -75,9 +76,11 @@ def main():
 		f1.write("ls -lrt \n");
 		f1.write("cat g4env4lpc.sh \n");
 		f1.write("source g4env4lpc.sh \n");
-		f1.write("python singleParticleGen.py -r %s -n %s -f \"events\" -e %f -z %f \n" % (str(partype) , opt.nevtsperjob, float(parenergy), float(zpos)) )
+		# f1.write("python singleParticleGen.py -r %s -n %s -f \"events\" -e %f -z %f \n" % (str(partype) , opt.nevtsperjob, float(parenergy), float(zpos)) )
+		f1.write("python singleParticleGen.py -b -r %s -n %s -e %f -z %f \n" % (str(partype) , opt.nevtsperjob, float(parenergy), float(zpos)) )		
 		f1.write("ls -lrt \n");
-		f1.write("./PFCalEE g4steer_%s.mac 5 2 1 50 \n" % tag)
+		f1.write("mkdir DawnFiles \n");
+		f1.write("./PFCalEE g4steer_%s.mac 1 2 0 \n" % tag) # detector version 1, model 2, 0 = use LHE file input
 		f1.write("mv PFcal.root PFcal_%s.root \n" % tag)
 		f1.write("xrdcp -f PFcal_%s.root root://cmseos.fnal.gov/%s/PFcal_%s.root \n" % (tag,opt.out,tag))
 		f1.close();
@@ -92,9 +95,16 @@ def main():
 		fs.write("/event/verbose 0 \n");
 		fs.write("/tracking/verbose 0 \n");
 		fs.write("/N03/det/setModel 2 \n");
-		fs.write("/filemode/inputFilename {0} \n".format(lhefile));
+		fs.write("/filemode/inputFilename events.lhe \n");
 		fs.write("/random/setSeeds %i %i \n" % (seed1+i,seed2+i));
 		fs.write("/run/initialize \n");
+		if opt.visualization: 
+			fs.write("/vis/open DAWNFILE \n");
+			fs.write("/vis/drawVolume \n");
+			fs.write("/vis/viewer/flush \n");
+			fs.write("/vis/scene/add/trajectories \n");
+			fs.write("/vis/scene/add/hits \n");
+		
 		fs.write("/run/beamOn %i \n" % opt.nevtsperjob);
 		fs.close();
 

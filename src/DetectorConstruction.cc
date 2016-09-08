@@ -168,18 +168,19 @@ void DetectorConstruction::buildHCal(){
 
 	if (version_ != E and version_ != T and version_ != TE){
 
-		iEleL.push_back(make_pair(3*mm,"Cu"));
-		iEleL.push_back(make_pair(1*mm,"Pb"));
-		iEleL.push_back(make_pair(50*mm,"SSteel"));
-		iEleL.push_back(make_pair(0.5*mm,"Cu"));
-		iEleL.push_back(make_pair(9*mm,"Scintillator"));
+		iEleL.push_back(make_pair(50*mm,"Steel"));
+		iEleL.push_back(make_pair(2*mm,"Air"));
+		iEleL.push_back(make_pair(6*mm,"Scintillator"));
+		iEleL.push_back(make_pair(2*mm,"Air"));
 		unsigned Nmodule=15;
 
 		for(unsigned i=0; i<Nmodule; i++) {
 			m_caloStruct.push_back( SamplingSection(iEleL) );
 		}
+
 	}
 }
+
 DetectorConstruction::~DetectorConstruction() {
 	delete m_detectorMessenger;
 }
