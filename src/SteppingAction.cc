@@ -75,7 +75,7 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
 	if (secondaries->size() > 0){
 		G4String theProcessName=secondaries->at(0)->GetCreatorProcess()->GetProcessName();
-		photoNuclear = ((theProcessName == "PhotonInelastic") && (incEng > eventAction_->minEng));
+		photoNuclear = ((theProcessName == "PhotonInelastic"));
 				//|| theProcessName == "ElectroNuclear" || theProcessName == "PositronNuclear")
 	}
 
