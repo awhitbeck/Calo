@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
   // Int_t nLayers,layerPEs[nL],layerNum[nL],layerSensDep[nL];
   // Float_t layerHFlux[nL],layerNFlux[nL],layerEFlux[nL],layerGFlux[nL],layerMFlux[nL];
 	
-  const int nLh = 15;
+  const int nLh = 25;
   const int nLe = 0;
   int event,seedx,seedy,seedz; 
   int nLayersH = nLh; 
@@ -76,8 +76,8 @@ int main(int argc, char** argv) {
   int nHadrons;
   float henergy[nLh],hcalLayerPEs[nLh],hcalLayerNum[nLh];
   float eenergy[nLe];
-  // std::vector<float> allHits_e;
-  float allHits_e[500];
+  std::vector<float> allHits_e;
+  //float allHits_e[500];
 
   float hpar_mass[100];
   //float hpar_px[100], hpar_py[100], hpar_pz[100];
@@ -98,7 +98,7 @@ int main(int argc, char** argv) {
   t1.Branch("hcalLayerPEs", &hcalLayerPEs, "hcalLayerPEs[nLayersH]/F");
   t1.Branch("hcalLayerNum", &hcalLayerNum, "hcalLayerNum[nLayersH]/F");
 
-  t1.Branch("allHits_e", &allHits_e, "allHits_e[500]/F");
+  t1.Branch("allHits_e", &allHits_e);
   t1.Branch("nHadrons", &nHadrons, "nHadrons/I");
   t1.Branch("hpar_mass", &hpar_mass, "hpar_mass[100]/F");
   //t1.Branch("hpar_px", &hpar_px, "hpar_px[100]/F");
@@ -135,8 +135,8 @@ int main(int argc, char** argv) {
     nhitsTrue = 0;
     nhitsE = 0;
     nhitsH = 0;
-    // allHits_e.clear();
-    for (int i = 0; i < 500;++i) allHits_e[i] = 0.;
+    if( allHits_e.size() > 0 ) allHits_e.clear();
+    //for (int i = 0; i < 500;++i) allHits_e[i] = 0.;
     for (int i = 0; i < 100;++i){
       hpar_mass[i] = 0.;
       //hpar_px[i] = 0.;
@@ -156,7 +156,7 @@ int main(int argc, char** argv) {
     for (int iL(0); iL < nLayersH; ++iL){ 
       henergy[iL] = 0;
     }
-
+    
     for (unsigned ihit(0); ihit < hitVec->size(); ++ihit){
 
       // ECAL
@@ -165,7 +165,8 @@ int main(int argc, char** argv) {
 	int necalLayer = hitVec->at(ihit).layer() - firstECALLayer;
 	eenergy[necalLayer] += hitVec->at(ihit).energy();
 
-	allHits_e[nhitsTrue] = hitVec->at(ihit).energy();
+	//allHits_e[nhitsTrue] = hitVec->at(ihit).energy();
+	allHits_e.push_back(hitVec->at(ihit).energy());
 
 	nhitsE++;
 	nhitsTrue++;
@@ -177,8 +178,9 @@ int main(int argc, char** argv) {
 	int nhcalLayer = hitVec->at(ihit).layer() - firstHCALLayer;
 	henergy[nhcalLayer] += hitVec->at(ihit).energy();
 
-	allHits_e[nhitsTrue] = hitVec->at(ihit).energy();
-				
+	//allHits_e[nhitsTrue] = hitVec->at(ihit).energy();
+	allHits_e.push_back(hitVec->at(ihit).energy());
+
 	nhitsH++;
 	nhitsTrue++;
 				
@@ -234,7 +236,7 @@ int main(int argc, char** argv) {
 
     // t1.Fill();
   }
-
+  
   t1.Write();
   hfile.Close();
   return 1;
