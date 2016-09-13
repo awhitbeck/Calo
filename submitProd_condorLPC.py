@@ -24,13 +24,14 @@ parser = optparse.OptionParser(usage)
 parser.add_option('-d', '--dettype'       ,    dest='dettype'              , help='detector type'           , default=1, type=int)
 parser.add_option('-N', '--njobs'       ,    dest='njobs'              , help='number of jobs'           , default=1, type=int)
 parser.add_option('-n', '--nevtsperjob' ,    dest='nevtsperjob'        , help='number of events'         , default=10, type=int)
-parser.add_option('-o', '--out'         ,    dest='out'                , help='output directory'             , default='/store/user/awhitbe1/LDMX/Run_Sept12' )
+parser.add_option('-o', '--out'         ,    dest='out'                , help='output directory'             , default='/store/user/awhitbe1/LDMX/Run_Sept13' )
 parser.add_option('-S', '--no-submit'   ,    action="store_true"       ,  dest='nosubmit'           , help='Do not submit batch job.')
 parser.add_option('-V', '--with-visualization'   ,    action="store_true"       ,  dest='visualization'           , help='Do not submit batch job.')
 parser.add_option('--subdir'            ,    dest='subdir'             , help='directory from which you submit' , default='tmp_condor')
 parser.add_option('--partype'           ,    dest='partype'            , help='particle type (pdgid)'             , default='11' , type=int)
 parser.add_option('--energy'            ,    dest='parenergy'          , help='particle energy'             , default=4, type=float )
-parser.add_option('--zpos'            ,    dest='zpos'          , help='z position of particle (cm)'             , default=-50., type=float )
+parser.add_option('--angle'            ,    dest='parangle'          , help='particle angle'             , default=0, type=float )
+parser.add_option('--zpos'            ,    dest='zpos'          , help='z position of particle (cm)'             , default=-30., type=float )
 #parser.add_option('-e', '--eos'         ,    dest='eos'                , help='eos path to save root file to EOS',         default='')
 (opt, args) = parser.parse_args()
 
@@ -78,13 +79,13 @@ def main():
 		f1.write("cat g4env4lpc.sh \n");
 		f1.write("source g4env4lpc.sh \n");
 		# f1.write("python singleParticleGen.py -r %s -n %s -f \"events\" -e %f -z %f \n" % (str(partype) , opt.nevtsperjob, float(parenergy), float(zpos)) )
-		f1.write("python singleParticleGen.py -b -r %s -n %s -e %f -z %f \n" % (str(partype) , opt.nevtsperjob, float(parenergy), float(zpos)) )		
+		f1.write("python singleParticleGen.py -b -r %s -n %s -e %f -z %f -t %f \n" % (str(partype) , opt.nevtsperjob, float(parenergy), float(zpos), float(opt.parangle)))		
 		f1.write("ls -lrt \n");
 		f1.write("mkdir DawnFiles \n");
 		f1.write("./PFCalEE g4steer_%s.mac %i 2 0 \n" % (tag,opt.dettype))# detector version 1, model 2, 0 = use LHE file input
 		f1.write("mv PFcal.root PFcal_%s.root \n" % tag)
 		f1.write("xrdcp -f PFcal_%s.root root://cmseos.fnal.gov/%s/PFcal_%s.root \n" % (tag,opt.out,tag))
-		f1.write("cd ../ ; rm -rf *")
+		f1.write("rm *root")
 		f1.close();
 
 		fsn = "g4steer_%s.mac" % tag;
