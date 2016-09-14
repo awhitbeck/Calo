@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
   // Int_t nLayers,layerPEs[nL],layerNum[nL],layerSensDep[nL];
   // Float_t layerHFlux[nL],layerNFlux[nL],layerEFlux[nL],layerGFlux[nL],layerMFlux[nL];
 	
-  const int nLh = 25;
+  const int nLh = 585;
   const int nLe = 0;
   int event,seedx,seedy,seedz; 
   int nLayersH = nLh; 

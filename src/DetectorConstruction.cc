@@ -168,11 +168,11 @@ void DetectorConstruction::buildHCal(){
 
 	if (version_ != E and version_ != T and version_ != TE){
 
-		iEleL.push_back(make_pair(50*mm,"Steel"));
+	        //iEleL.push_back(make_pair(50*mm,"Steel"));
 		iEleL.push_back(make_pair(2*mm,"Air"));
 		iEleL.push_back(make_pair(6*mm,"Scintillator"));
 		iEleL.push_back(make_pair(2*mm,"Air"));
-		unsigned Nmodule=25;
+		unsigned Nmodule=585;
 
 		for(unsigned i=0; i<Nmodule; i++) {
 			m_caloStruct.push_back( SamplingSection(iEleL) );
