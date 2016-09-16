@@ -44,10 +44,22 @@ void SteppingAction::UserSteppingAction(const G4Step* aStep) {
 
 	G4int pdgID = lTrack->GetDefinition()->GetPDGEncoding();
 	G4double eRawDep = aStep->GetTotalEnergyDeposit()  * MeV;
+	G4int pdgId = lTrack->GetDefinition()->GetPDGEncoding();
 
-	HGCSSGenParticle genPart;
-	if(!eventAction_->doFast())
-		eventAction_->Detect(eRawDep, volume,lTrack,position);
+	HGCSSGenParticle genPart0;
+	const G4ThreeVector &p = lTrack->GetMomentum();
+	const G4ThreeVector & postposition = thePostStepPoint->GetPosition();
+	G4ParticleDefinition *pd = lTrack->GetDefinition();
+	genPart0.setPosition(postposition[0], postposition[1], postposition[2]);
+	genPart0.setMomentum(p[0], p[1], p[2]);
+	genPart0.mass(pd->GetPDGMass());
+	genPart0.pdgid(pdgId);
+	genPart0.charge(pd->GetPDGCharge());
+
+	if(!eventAction_->doFast()){
+		G4bool isForward = (p[2] > 0);
+		eventAction_->Detect(kinEng, eRawDep, volume, lTrack, position, pdgId, isForward);
+	}
 
 	const G4TrackVector* secondaries= aStep->GetSecondary();
 
