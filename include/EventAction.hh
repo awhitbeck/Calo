@@ -30,7 +30,7 @@ public:
 	void BeginOfEventAction(const G4Event*);
 	void EndOfEventAction(const G4Event*);
 
-	void Detect(G4double eRawDep,G4VPhysicalVolume *volume,G4Track* lTrack,const G4ThreeVector & position);
+	void Detect(G4double parentKE, G4double eRawDep,G4VPhysicalVolume *volume,G4Track* lTrack,const G4ThreeVector & position, G4int pdgId, G4bool isForward);
 
 	void SetPrintModulo(G4int val) {
 		printModulo = val;
@@ -62,6 +62,7 @@ private:
 	std::vector<SamplingSection> *detector_;
 	G4int printModulo,initLayer;
 	G4bool doFast_;
+	HGCSSSamplingSectionVec ssvec_;
 	HGCSSSimHitVec hitvec_;
 	HGCSSGeometryConversion* geomConv_;
 	TFile *outF_;

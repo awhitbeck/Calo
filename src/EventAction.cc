@@ -46,14 +46,12 @@ EventAction::EventAction(G4bool doFast) {
 	tree_ = new TTree("HGCSSTree", "HGC Standalone simulation tree");
 	tree_->Branch("HGCSSEvent", "HGCSSEvent", &event_);
 	tree_->Branch("HGCSSSimHitVec", "std::vector<HGCSSSimHit>", &hitvec_);
+	tree_->Branch("HGCSSSamplingSectionVec", "std::vector<HGCSSSamplingSection>", &ssvec_);
 	/*tree_->Branch("HGCSSGenAction", "std::vector<HGCSSGenParticle>",
 			&genvec_);*/
-	tree_->Branch("HGCSSHadAction", "std::vector<HGCSSGenParticle>",
-			&hadvec_);
-	tree_->Branch("HGCSSIncAction", "std::vector<HGCSSGenParticle>",
-			&incvec_);
-	tree_->Branch("HGCSSEscapeAction", "std::vector<HGCSSGenParticle>",
-			&escapevec_);
+	tree_->Branch("HGCSSHadAction", "std::vector<HGCSSGenParticle>", &hadvec_);
+	tree_->Branch("HGCSSIncAction", "std::vector<HGCSSGenParticle>", &incvec_);
+	tree_->Branch("HGCSSEscapeAction", "std::vector<HGCSSGenParticle>", &escapevec_);
 	//tree_->Branch("HGCSSNovelAction", "std::vector<HGCSSGenParticle>",
 		//	&novelVec_);
 }
@@ -78,17 +76,18 @@ void EventAction::BeginOfEventAction(const G4Event* evt) {
 }
 
 //
-void EventAction::Detect(G4double eDepRaw, G4VPhysicalVolume *volume,G4Track* lTrack,const G4ThreeVector & position) {
+void EventAction::Detect(G4double parentKE, G4double eDepRaw, G4VPhysicalVolume *volume,G4Track* lTrack,const G4ThreeVector & position, G4int pdgId, G4bool isForward) {
 	std::pair<G4bool,G4bool> stopIter = std::make_pair(false,false);
 	for (size_t i = initLayer; i < detector_->size(); i++){
 		if (stopIter.first) break;
-		stopIter = (*detector_)[i].add( eDepRaw, volume,lTrack, position);
+		stopIter = (*detector_)[i].add( parentKE, eDepRaw, volume,lTrack, position, pdgId, isForward);
 	}
 
 }
 
 
 void EventAction::EndOfEventAction(const G4Event* /*g4evt*/) {
+	
 	event_.eventNumber(evtNb_);
 	G4String fileN = "currentEvent.rndm";
 	std::ifstream input(fileN);
@@ -115,8 +114,18 @@ void EventAction::EndOfEventAction(const G4Event* /*g4evt*/) {
 		double totalSens = 0;
 		double wgtTotalSens = 0;
 
-		for (size_t i =  ((DetectorConstruction*) G4RunManager::GetRunManager()->GetUserDetectorConstruction())->initLayer()
-				; i < detector_->size(); i++) {
+		ssvec_.clear();
+		ssvec_.reserve(detector_->size());
+
+		for (size_t i =  ((DetectorConstruction*) G4RunManager::GetRunManager()->GetUserDetectorConstruction())->initLayer(); i < detector_->size(); i++) {
+
+			HGCSSSamplingSection lSec;
+			lSec.gamKinFlux( (*detector_)[i].getKinGam() );
+			lSec.neutronKinFlux( (*detector_)[i].getKinNeutron() );
+			lSec.eleKinFlux( (*detector_)[i].getKinEle() );
+			lSec.muKinFlux( (*detector_)[i].getKinMuon() );
+			lSec.hadKinFlux( (*detector_)[i].getKinHadron() );
+			ssvec_.push_back(lSec);
 
 			Double_t weight = (i < 8) ? .8 : 1. ;
 			totalSens += (*detector_)[i].getTotalSensE();
@@ -166,6 +175,7 @@ void EventAction::EndOfEventAction(const G4Event* /*g4evt*/) {
 	//FreeAll(novelVec_);
 	//hitvec_.clear();
 	FreeAll(hitvec_);
+	FreeAll(ssvec_);
 	//targetPartEngs.clear();
 	FreeAll(targetPartEngs);
 
