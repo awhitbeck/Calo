@@ -24,7 +24,7 @@ parser = optparse.OptionParser(usage)
 parser.add_option('-d', '--dettype'       ,    dest='dettype'              , help='detector type'           , default=1, type=int)
 parser.add_option('-N', '--njobs'       ,    dest='njobs'              , help='number of jobs'           , default=1, type=int)
 parser.add_option('-n', '--nevtsperjob' ,    dest='nevtsperjob'        , help='number of events'         , default=10, type=int)
-parser.add_option('-o', '--out'         ,    dest='out'                , help='output directory'             , default='/store/user/awhitbe1/LDMX/Run_Sept13' )
+parser.add_option('-o', '--out'         ,    dest='out'                , help='output directory'             , default='/store/user/awhitbe1/LDMX/Run_Sept14' )
 parser.add_option('-S', '--no-submit'   ,    action="store_true"       ,  dest='nosubmit'           , help='Do not submit batch job.')
 parser.add_option('-V', '--with-visualization'   ,    action="store_true"       ,  dest='visualization'           , help='Do not submit batch job.')
 parser.add_option('--subdir'            ,    dest='subdir'             , help='directory from which you submit' , default='tmp_condor')
@@ -59,10 +59,11 @@ def main():
 
 	lhefile = "%d_%gGeV_phi0_theta0_x0_y0_z%s_%s.lhe"%(nevtsperjob,parenergy,zpos,parNameDict[partype])
 	#lhefile = "{0}_{1}GeV_phi0_theta0_x0_y0_z{2}_{3}.lhe".format(nevtsperjob,parenergy,zpos,parNameDict[partype])
-	os.system("cp ~/geant4_workdir/bin/Linux-g++/PFCalEE ~/geant4_workdir/tmp/Linux-g++/PFCalEE/libPFCalEE.so g4env4lpc.sh userlib/lib/libPFCalEEuserlib.so generators/singleParticleGen.py b18d36.dat %s/." % (subdir))
+	os.system("cp userlib/bin/simpleDigitizer ~/geant4_workdir/bin/Linux-g++/PFCalEE ~/geant4_workdir/tmp/Linux-g++/PFCalEE/libPFCalEE.so g4env4lpc.sh userlib/lib/libPFCalEEuserlib.so generators/singleParticleGen.py b18d36.dat %s/." % (subdir))
 	os.chdir(subdir);
-	os.system("tar -cvzf inputs.tar.gz PFCalEE g4env4lpc.sh libPFCalEE.so libPFCalEEuserlib.so singleParticleGen.py b18d36.dat" );
+	os.system("tar -cvzf inputs.tar.gz simpleDigitizer PFCalEE g4env4lpc.sh libPFCalEE.so libPFCalEEuserlib.so singleParticleGen.py b18d36.dat" );
 
+	exit
 	for i in range(njobs):
 
 		tag = "gun_%s_%s_job%s" % ( partype, str(round(parenergy,2)), str(i) );
@@ -84,7 +85,9 @@ def main():
 		f1.write("mkdir DawnFiles \n");
 		f1.write("./PFCalEE g4steer_%s.mac %i 2 0 \n" % (tag,opt.dettype))# detector version 1, model 2, 0 = use LHE file input
 		f1.write("mv PFcal.root PFcal_%s.root \n" % tag)
+		f1.write("./simpleDigitizer PFcal_%s.root PFcal_%s \n" % (tag,tag))
 		f1.write("xrdcp -f PFcal_%s.root root://cmseos.fnal.gov/%s/PFcal_%s.root \n" % (tag,opt.out,tag))
+		f1.write("xrdcp -f simpleHCalDigis_PFcal_%s.root root://cmseos.fnal.gov/%s/simpleHCalDigis_PFcal_%s.root \n" % (tag,opt.out,tag))
 		f1.write("rm *root")
 		f1.close();
 

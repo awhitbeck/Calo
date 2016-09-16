@@ -168,12 +168,37 @@ void DetectorConstruction::buildHCal(){
 
 	if (version_ != E and version_ != T and version_ != TE){
 
-	        //iEleL.push_back(make_pair(50*mm,"Steel"));
-		iEleL.push_back(make_pair(2*mm,"Air"));
+	        //100% sampling fraction section
 		iEleL.push_back(make_pair(6*mm,"Scintillator"));
 		iEleL.push_back(make_pair(2*mm,"Air"));
-		unsigned Nmodule=585;
+		unsigned Nmodule=55;
 
+		for(unsigned i=0; i<Nmodule; i++) {
+			m_caloStruct.push_back( SamplingSection(iEleL) );
+		}
+		//50% sampling fraction section
+		Nmodule=12;
+		for( unsigned i = 0 ; i < Nmodule ; i++ ){
+		  iEleL.clear();
+		  iEleL.push_back(make_pair(10*mm,"Steel"));
+		  iEleL.push_back(make_pair(2*mm,"Air"));
+		  m_caloStruct.push_back( SamplingSection(iEleL) );
+		  
+		  iEleL.clear();
+		  iEleL.push_back(make_pair(6*mm,"Scintillator"));
+		  iEleL.push_back(make_pair(2*mm,"Air"));
+		  unsigned int NsubModule=8;
+		  for(unsigned i=0; i<NsubModule; i++) {
+		    m_caloStruct.push_back( SamplingSection(iEleL) );
+		  }		  
+		}
+		//1% sampling fraction section
+		iEleL.clear();
+	        iEleL.push_back(make_pair(50*mm,"Steel"));
+		iEleL.push_back(make_pair(2*mm,"Air"));
+		iEleL.push_back(make_pair(2.5*mm,"Scintillator"));
+		iEleL.push_back(make_pair(2*mm,"Air"));
+		Nmodule=7;
 		for(unsigned i=0; i<Nmodule; i++) {
 			m_caloStruct.push_back( SamplingSection(iEleL) );
 		}

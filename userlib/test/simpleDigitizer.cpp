@@ -54,7 +54,11 @@ int main(int argc, char** argv) {
   tree->SetBranchAddress("HGCSSSimHitVec", &hitVec);
   tree->SetBranchAddress("HGCSSHadAction", &hadVec);
 	
-  unsigned nEvts = tree->GetEntries();
+  unsigned nEvts;
+  if( argc>3 )
+    nEvts = atoi(argv[3]);
+  else 
+    nEvts = tree->GetEntries();
 
   char outFileName[256];
   sprintf(outFileName,"simpleHCalDigis_%s.root",argv[2]);
@@ -67,7 +71,7 @@ int main(int argc, char** argv) {
   // Int_t nLayers,layerPEs[nL],layerNum[nL],layerSensDep[nL];
   // Float_t layerHFlux[nL],layerNFlux[nL],layerEFlux[nL],layerGFlux[nL],layerMFlux[nL];
 	
-  const int nLh = 585;
+  const int nLh = 170;
   const int nLe = 0;
   int event,seedx,seedy,seedz; 
   int nLayersH = nLh; 
@@ -125,6 +129,8 @@ int main(int argc, char** argv) {
   int nhitsTrue = 0;
   for (unsigned ievt(0); ievt < nEvts; ++ievt) { //loop on entries
     tree->GetEntry(ievt);
+
+    if( ievt%100 == 0 ) cout << "ievt: " << ievt << endl;
 	
     // event info
     event = ev->eventNumber();
@@ -190,6 +196,10 @@ int main(int argc, char** argv) {
 	//// DIGITIZED INFORMATION
 	float MeVperMIP = 1.40;
 	float PEperMIP = 13.5*6./4.;
+	if( iL > 152 ){
+	  MeVperMIP*=2.5/6.;
+	  PEperMIP*=2.5/6.;
+	}
 	float depEnergy = henergy[iL];
 	float meanPE = depEnergy/MeVperMIP*PEperMIP;
 	std::default_random_engine generator;
